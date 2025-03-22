@@ -23,7 +23,8 @@ const validateEmail = (email) => {
     
     const accessToken=await jwt.sign({
        email:user.email,
-       username:user.username
+       username:user.username,
+       role:user.role
       },
       process.env.ACSESS_TOKEN_SECRET,
       {
