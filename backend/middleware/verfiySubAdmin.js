@@ -1,0 +1,19 @@
+import apiError from "../utils/apiError.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
+dotenv.config()
+
+const verifySubAdmin=asyncHandler(async(req,res,next)=>{
+    if(req.user.role=="subscriber")
+    {
+        next()
+    }
+    else
+    {
+        throw new apiError(401,"Unauthorized Access")
+    }
+    
+})
+
+export default verifySubAdmin
