@@ -51,14 +51,16 @@ const User={
                 .input('lname', sql.VarChar, user.lastName)   
                 .input('email', sql.VarChar, user.email)   
                 .input('password', sql.VarChar, user.password)
-                .query(`INSERT INTO Personnel (username, role, fname, lname, email, password)
-                        VALUES (@username, @role, @fname, @lname, @email, @password)`);
+                .input('subadmin', sql.VarChar, user.subadmin || null) // Setting NULL explicitly
+                .query(`INSERT INTO Personnel (username, role, fname, lname, email, password, subadmin)
+                        VALUES (@username, @role, @fname, @lname, @email, @password, @subadmin)`);
             return true;
         } catch (err) {
             console.log("USER could not be created:", err.message);
             return false;
         }
     }
+    
     
 }
 

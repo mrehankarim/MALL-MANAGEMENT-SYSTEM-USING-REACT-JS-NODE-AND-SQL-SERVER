@@ -19,6 +19,10 @@ const getAllShops=asyncHandler(async(req,res)=>{
     )
 })
 
+const getAllStores=asyncHandler(async(req,res)=>{
+    
+})
+
 const addCustomer=asyncHandler(async (req,res)=>{
     const {username,email,firstName,lastName,role,password}=req.body
 
@@ -47,7 +51,7 @@ const addCustomer=asyncHandler(async (req,res)=>{
         }
     }
     const hashedPassword=await bcrypt.hash(password,10)
-    await User.createUser({username,email,role,firstName,lastName,password:hashedPassword})
+    await User.createUser({username,email,role,firstName,lastName,password:hashedPassword,subadmin:req.user?.username})
     
     const createdUser=await User.getUserByEmail(email);
     if(createdUser.length==0)
