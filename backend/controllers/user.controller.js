@@ -138,4 +138,29 @@ const loginUser=asyncHandler(async(req,res)=>{
       )
 })
 
-export {registerUser,loginUser}
+const logOutUser=asyncHandler(async(req,res)=>{
+    //clear accesTpken
+    //clear refreshToken
+    
+    const user=req.user
+    if(!user)
+    {
+        throw new apiError(401,"accessTokenExpired during signout")
+    }
+    const options = {
+        httpOnly: true,
+        secure: true,
+      };
+
+     if(!(await User.updateRefreshToken(null,user.email))) 
+     {
+        throw new apiError(500,"something went wrong while signing out")
+     }
+     res.status(200)
+     .clearCookie("accessToken",options)
+     .clearCookie("refreshToken",options)
+     .json(
+        new apiResponse(200,{},"user logged out successfully")
+     )
+})
+export {registerUser,loginUser,logOutUser}

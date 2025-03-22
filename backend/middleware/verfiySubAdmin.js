@@ -5,7 +5,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const verifySubAdmin=asyncHandler(async(req,res,next)=>{
-    if(req.user.role=="subscriber")
+    if(req.user?.role=="subscriber")
     {
         next()
     }

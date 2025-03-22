@@ -3,6 +3,8 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import dotenv from "dotenv"
 import userRouter from './routes/user.routes.js'
+
+import shopRouter from './routes/subadmin.route.js'
 dotenv.config()
 const app=express()
 const PORT=3000 || process.env.PORT
@@ -15,6 +17,7 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 app.use("/api/v1/user",userRouter)
+app.use("/api/v1/shop",shopRouter)
 
 app.listen(PORT,()=>{
     console.log(`Application is running on http://localhost:${PORT}`)

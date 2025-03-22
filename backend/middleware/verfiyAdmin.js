@@ -6,7 +6,7 @@ dotenv.config()
 
 
 const verifyAdmin=asyncHandler(async(req,res,next)=>{
-    if(req.user.role=="admin")
+    if(req.user?.role=="admin")
     {
         next()
     }
