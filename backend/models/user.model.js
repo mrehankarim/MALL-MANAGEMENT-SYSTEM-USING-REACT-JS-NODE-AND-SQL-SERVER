@@ -58,11 +58,23 @@ const User={
             console.log("USER could not be created:", err.message);
             return false;
         }
+    },
+    async MatchCustomerSubAdmin(customer,subadmin)
+    {
+        try {
+            const pool = await poolPromise;
+        const result=await pool.request()
+        .input('customer',sql.VarChar,customer)
+        .input('subadmin',sql.VarChar,subadmin)
+        .output('foundFlag',sql.Bit)
+        .execute('MatchCustomerSubadmin')
+        return result.output.foundFlag;
+        } catch (error) {
+            console.log("Error in MatchCustomer Admin");
+        }
     }
     
-    
 }
-
 export default User
 
 //getSubAdminByUsername
