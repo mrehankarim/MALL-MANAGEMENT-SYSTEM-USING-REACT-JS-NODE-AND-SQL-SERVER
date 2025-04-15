@@ -52,8 +52,7 @@ const User={
                 .input('email', sql.VarChar, user.email)   
                 .input('password', sql.VarChar, user.password)
                 .input('subadmin', sql.VarChar, user.subadmin || null) // Setting NULL explicitly
-                .query(`INSERT INTO Personnel (username, role, fname, lname, email, password, subadmin)
-                        VALUES (@username, @role, @fname, @lname, @email, @password, @subadmin)`);
+                .execute('RegisterUser')
             return true;
         } catch (err) {
             console.log("USER could not be created:", err.message);

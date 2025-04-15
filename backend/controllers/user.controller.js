@@ -6,7 +6,6 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 dotenv.config()
-
 const verifyPassword=async(password,user)=>
 {
     return await bcrypt.compare(password,user.password)
