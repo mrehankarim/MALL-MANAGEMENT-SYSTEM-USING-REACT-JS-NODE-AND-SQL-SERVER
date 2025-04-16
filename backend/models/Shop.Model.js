@@ -30,6 +30,24 @@ const Shop = {
             console.log(error)
             return false
         }
+    },
+
+    async allocateShop(store_name, shop_no, store_owner_username, category) {
+        console.log("Input Parameters:", { store_name, shop_no, store_owner_username, category });
+        try {
+            const pool = await poolPromise;
+            await pool.request()
+                .input('store_name', sql.VarChar, store_name)
+                .input('shop_no', sql.Int, shop_no)
+                .input('store_owner_username', sql.VarChar, store_owner_username)
+                .input('category', sql.VarChar, category)   
+                .execute('AllocateShop');
+            return true;
+        } catch (err) {
+            console.log("SHOP could not be allocated:", err.message);
+            return false;
+        }
     }
+
 }
 export default Shop

@@ -49,8 +49,7 @@ const registerUser=asyncHandler(async (req,res)=>{
     //validate email format
     //check for existing username and email
     //save user in database
-
-
+    
     const {username,email,firstName,lastName,role,password}=req.body
 
     if([username,email,firstName,lastName,role,password].some((field)=>{
@@ -59,12 +58,13 @@ const registerUser=asyncHandler(async (req,res)=>{
     {
         throw new apiError(400,"All field are reuqired")
     }
+    
     if(!validateEmail(email))
     {
         throw new apiError(400,"Inavlid email")
     }
-    let existingUser=await User.getUserByEmail(email)
     
+    let existingUser=await User.getUserByEmail(email)
     if(existingUser.length>0)
     {
         throw new apiError(400,"email already exists")   
@@ -77,6 +77,7 @@ const registerUser=asyncHandler(async (req,res)=>{
             throw new apiError(400,"username already exists")    
         }
     }
+    
     const hashedPassword=await bcrypt.hash(password,10)
     await User.createUser({username,email,role,firstName,lastName,password:hashedPassword})
     

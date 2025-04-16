@@ -125,5 +125,32 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
       failedEntries: failedList
     });
   });
+
+  const allocateVacantShop = asyncHandler(async(req, res)=>{
+      
+      const{store_name, shop_no, owner_username, store_category}=req.body;
+      if([store_name,shop_no,owner_username,store_category].some((field)=>{
+        field?.trim()==="" || field===undefined
+      }))
+      {
+          throw new apiError(400,"All field are required")
+      }
+
+      let existingUser=await User.getUserByUsername(owner_username);
+      if(existingUser.length===0){
+        throw new apiError(400,"username doesnot exist")    
+      }
+      
+      if(isNaN(shop_no)){
+        throw new apiError(400, "shop no is not valid");
+      }
+      
+      await Shop.allocateShop(store_name, shop_no, owner_username, store_category);
+
+      //yahan error show krna he abhi ky some problem while allocating shop
+
+      res.status(200).json(
+      new apiResponse(200,shop_no,"Vacant shop allocated successfully"));
+  });
   
-export {getAllShops,addCustomer,addShopsInBulk}
+export {getAllShops,addCustomer,addShopsInBulk, allocateVacantShop}

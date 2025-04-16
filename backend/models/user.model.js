@@ -6,6 +6,7 @@ const User={
         const pool=await poolPromise
         const user=await pool.request().input('username',sql.VarChar,username)
         .execute('GET_USER_BY_USERNAME')
+        
         return user.recordset
     },
     async getUserByEmail(email)
@@ -51,7 +52,7 @@ const User={
                 .input('lname', sql.VarChar, user.lastName)   
                 .input('email', sql.VarChar, user.email)   
                 .input('password', sql.VarChar, user.password)
-                .input('subadmin', sql.VarChar, user.subadmin || null) // Setting NULL explicitly
+                .input('subadmin', sql.VarChar, user.subadmin || null) //  NULL explicitly
                 .execute('RegisterUser')
             return true;
         } catch (err) {
