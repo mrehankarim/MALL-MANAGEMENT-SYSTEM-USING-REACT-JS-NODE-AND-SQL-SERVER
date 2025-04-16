@@ -32,8 +32,16 @@ const Shop = {
         }
     },
 
+    async getShop_by_ShopNumber(shopNo)
+    {
+        const pool=await poolPromise
+        const user=await pool.request().input('shop_no',sql.Int,shopNo)
+        .execute('GET_SHOP_BY_NUMBER')
+        
+        return user.recordset
+    },
+
     async allocateShop(store_name, shop_no, store_owner_username, category) {
-        console.log("Input Parameters:", { store_name, shop_no, store_owner_username, category });
         try {
             const pool = await poolPromise;
             await pool.request()
@@ -45,6 +53,20 @@ const Shop = {
             return true;
         } catch (err) {
             console.log("SHOP could not be allocated:", err.message);
+            return false;
+        }
+    },
+
+    async update_Rent_Amount(shop_no, new_rent){
+        try {
+            const pool = await poolPromise;
+            await pool.request()
+                .input('shop_no', sql.Int, shop_no)  
+                .input('new_rent', sql.Decimal, new_rent)
+                .execute('UpdateRent');
+            return true;
+        } catch (err) {
+            console.log("RENT could not be updated:", err.message);
             return false;
         }
     }

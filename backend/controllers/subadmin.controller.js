@@ -152,5 +152,41 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
       res.status(200).json(
       new apiResponse(200,shop_no,"Vacant shop allocated successfully"));
   });
+
+  const updateRentAmount=asyncHandler(async(req, res)=>{
+
+    const{shop_no, new_rent}=req.body;
+
+    if([shop_no, new_rent].some((field)=>{
+      field?.trim()==="" || field===undefined
+    }))
+    {
+        throw new apiError(400,"All field are required")
+    }
+    
+    if(isNaN(shop_no)){
+      throw new apiError(400, "shop no not valid");
+    }
+
+    let existingShop=await Shop.getShop_by_ShopNumber(shop_no);
+    if(!existingShop|| existingShop.length===0){
+      throw new apiError(400, "shop not found");
+    }
+
+    if(isNaN(new_rent)){
+      throw new apiError(400, "new rent entered is not valid")
+    }
+
+    if(new_rent<0){
+      throw new apiError(400, "rent added is negative")
+    }
+
+    await Shop.update_Rent_Amount(shop_no, new_rent);
+
+    //yahan error show krna he abhi ky some problem while updating rent
+
+    res.status(200).json(
+      new apiResponse(200,shop_no,"Rent updated successfully"));
+  });
   
-export {getAllShops,addCustomer,addShopsInBulk, allocateVacantShop}
+export {getAllShops,addCustomer,addShopsInBulk, allocateVacantShop, updateRentAmount}
