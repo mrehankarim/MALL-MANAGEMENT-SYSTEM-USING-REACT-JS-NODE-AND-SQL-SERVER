@@ -3,7 +3,7 @@ import cors from "cors"
 import cookieParser from "cookie-parser"
 import dotenv from "dotenv"
 import userRouter from './routes/user.routes.js'
-
+import customerRouter from './routes/customer.route.js'
 import subscriber from './routes/subadmin.route.js'
 dotenv.config()
 const app=express()
@@ -18,6 +18,7 @@ app.use(cookieParser())
 
 app.use("/api/v1/user",userRouter)
 app.use("/api/v1/subscriber",subscriber)
+app.use("/api/v1/customer",customerRouter)
 
 app.listen(PORT,()=>{
     console.log(`Application is running on http://localhost:${PORT}`)

@@ -121,23 +121,16 @@ const activateStore=asyncHandler(async(req,res)=>{
     new apiResponse(200,{},"store activated successfully")
   )
 })
-const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
-})
 const inserBillsInBulk=asyncHandler(async(req,res)=>{
   //upload CSV containing all bils
 })
-const insertRentInBulk=asyncHandler(async(req,res)=>{
-  //insert a rents in bulk for store
-})
+
 const insertBill=asyncHandler(async(req,res)=>{
   //insert a bill for store
 })
 const requestBill=asyncHandler(async(req,res)=>{
   //get monthly bills of a store
-})
-const insertRent=asyncHandler(async(req,res)=>{
-  //insert rent of shops
 })
 const requestRent=asyncHandler(async(req,res)=>{
   //request rent of stores
@@ -198,17 +191,20 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
   
     for (const [index, shop] of parsedData.entries()) {
       try {
-        
-
         if(!await Shop.createShop(
             shop['shopno'],
             shop.location,
             shop.status,
+            shop.rent,
             req.user?.username
           ))
           {
             throw new Error('could not create shop')
           }
+          successList.push({
+            index,
+            shop_no: shop.shop_no
+          })
       } catch (err) {
         failedList.push({
           index,

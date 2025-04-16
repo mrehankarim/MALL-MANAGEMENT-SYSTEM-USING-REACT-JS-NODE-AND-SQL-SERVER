@@ -7,12 +7,12 @@ const Shop = {
         const shoprecords = await pool.request()
             .input('shopowner', sql.VarChar, username)
             .query(`
-            SELECT * FROM Shop
+            SELECT * FROM ShopRent
             where shopowner=@shopowner`)
             
         return shoprecords.recordset
     },
-    async createShop(id,location,status,subadmin)
+    async createShop(id,location,status,rent,subadmin)
     {
         const pool = await poolPromise
         try {
@@ -20,11 +20,9 @@ const Shop = {
   .input('shop_no', sql.Int, id)
   .input('location', sql.VarChar, location)
   .input('status', sql.VarChar, status)
-  .input('owner', sql.VarChar, subadmin)
-  .query(`
-    INSERT INTO Shop (shop_no, location, status, shopowner)
-    VALUES (@shop_no, @location, @status, @owner)
-  `);
+  .input('shopowner', sql.VarChar, subadmin)
+  .input('rent',sql.Decimal,rent)
+  .execute('addShop')
             return true
         } catch (error) {
             console.log(error)

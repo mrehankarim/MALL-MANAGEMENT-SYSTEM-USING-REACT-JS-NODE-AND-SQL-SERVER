@@ -51,6 +51,24 @@ const Store =
             return false
         }
         
+    },
+    async insertDailyRevenue(store_id,total_earnings,date)
+    {
+        try {
+            const pool=await poolPromise
+            await pool.request()
+            .input('store_id',sql.Int,store_id)
+            .input('total_earnings',sql.Decimal,total_earnings)
+            .input('date',sql.Date,date)
+            .execute('InsertDailySales')
+            return true
+
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+        
+
     }
 }
 
