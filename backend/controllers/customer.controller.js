@@ -4,6 +4,7 @@ import apiResponse from '../utils/apiResponse.js'
 import dotenv from "dotenv"
 import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
+import Rent from "../models/Rent.Model.js"
 dotenv.config()
 const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     //user would be loggedIn while inserting daily revenue
@@ -41,9 +42,24 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
       new apiResponse(200,bills,"Bill fetched successfully")
     )
   })
-
+  const getActiveRent=asyncHandler(async (req,res)=>{
+    //this function shop no of store from front end and fetches all it's active bills 
+    const shop_no=req.query.shop_no
+    if(!shop_no)
+    {
+      throw new apiError(400,"shop no is required")
+    }
+    const rents=await Rent.getActiveRentsByshop(shop_no)
+    if(!rents)
+    {
+      throw new apiError(500,"Something went wrong")
+    }
+    res.status(200).json(
+      new apiResponse(200,rents,'Rents fetched successfully')
+    )
+  })
   const payBill=asyncHandler(async(req,res)=>{
     //store owner will pay bill
   })
 
-  export {insertStoreDailyRevenue,getActiveBillsOfStore}
+  export {insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent}

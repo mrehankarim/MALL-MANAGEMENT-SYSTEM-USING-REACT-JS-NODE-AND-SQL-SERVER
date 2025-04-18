@@ -18,9 +18,27 @@ const Rent={
             return false
         }
         
+        
 
         
-    }
+    },
+    async getActiveRentsByshop(shop_no)
+        {
+            try {
+                const pool=await poolPromise
+
+            const result=await pool.request().
+            input('shop_no',sql.Int,shop_no)
+            .execute('getActiveRents')
+            return result.recordset
+                
+            } catch (error) {
+                console.log("error in fecthing active bills",error)
+                
+            }
+            
+        }
+
 }
 
 export default Rent
