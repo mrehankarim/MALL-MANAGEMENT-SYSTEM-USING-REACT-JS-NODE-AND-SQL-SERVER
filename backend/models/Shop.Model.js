@@ -54,6 +54,30 @@ const Shop = {
             `
         )
         return result.recordset.length===0?false:true
+    },
+    async MatchShopAndSubadmin(shop_no,username)
+    {
+        const pool =await poolPromise
+        const result=await pool.request()
+        .input('shop_no',sql.Int,shop_no)
+        .input('username',sql.VarChar,username)
+        .execute('MatchShopNoAndSubAdmin')
+        return result.recordset.length==0?false:true
+    },
+    async getShopsBySubscriber(username)
+    {
+        try {
+            
+            const pool=await poolPromise
+            const result=await pool.request()
+            .input("username",sql.VarChar,username)
+            .execute('getAllocatedShop')
+            return result.recordset
+        } catch (error) {
+            console.log("Erro in fetching shop no")
+            return false
+        }
+        
     }
 }
 
