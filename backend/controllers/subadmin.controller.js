@@ -7,8 +7,14 @@ import User from "../models/user.model.js"
 import Papa from "papaparse"
 import fs from "fs"
 import Store from "../models/Store.Model.js"
+import Bill from "../models/Bill.Model.js"
+import Rent from "../models/Rent.Model.js"
 
 dotenv.config()
+function validateEmail(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+}
 
 const getAllShops=asyncHandler(async(req,res)=>{
     const shops=await Shop.getAllShopBySubAdmin(req.user?.username)
@@ -22,7 +28,15 @@ const getAllShops=asyncHandler(async(req,res)=>{
 })
 
 const getAllStores=asyncHandler(async(req,res)=>{
-    
+  const username=req.user?.username
+  const stores=await Store.getStoresBySubscriber(username)
+  if(!stores)
+  {
+    throw new apiError(500,'Internal server Error')
+  }
+  res.status(200).json(
+    new apiResponse(200,stores,"Stores retrived successfully")
+  )
 })
 
 const addCustomer=asyncHandler(async (req,res)=>{
@@ -128,30 +142,101 @@ const inserBillsInBulk=asyncHandler(async(req,res)=>{
 
 const insertBill=asyncHandler(async(req,res)=>{
   //insert a bill for store
+  const {shop_no,type,amount,month_year}=req.body
+  
+  if([shop_no,type,amount,month_year].some((field)=>{
+    field==undefined || field.trim()==""
+  }))
+  {
+    throw new apiError(400,"All fields are required")
+  }
+  
+  if(!await Shop.MatchShopAndSubadmin(shop_no,req.user?.username))
+  {
+    throw new apiError(400,"Invalid shop Number")
+  }
+  
+  if(!await Bill.InsertBill(shop_no,type,amount,month_year))
+  {
+    throw new apiError(500,"Something went wrong while inserting bill")
+  }
+  res.status(200).json(
+    new apiResponse(200,{},"Bill inserted successfully")
+  )
+
 })
-const requestBill=asyncHandler(async(req,res)=>{
-  //get monthly bills of a store
+const getBillsofShop=asyncHandler(async(req,res)=>{
+  //send shop_no of store from front end
+
+  const shop_no=req.query.shop_no
+  if(!shop_no)
+  {
+    throw new apiError(400,"Shop umber is required")
+  }
+  const bills=await Bill.getBillsOfShop(shop_no)
+  if(!bills)
+  {
+    throw new apiError(500,"Internal server error in feteching bills")
+  }
+  res.status(200).json(
+    new apiResponse(200,bills,"Bills fetched successfully")
+  )
 })
-const requestRent=asyncHandler(async(req,res)=>{
-  //request rent of stores
+
+const addMonthlyRentofStore=asyncHandler(async (req,res)=>{
+  //this function takes username of subadmin and add montly 
+  // rent of allocated shops for each subadmin
+
+  const username=req.user?.username
+  const shops=await Shop.getShopsBySubscriber(username)
+  if(!shops)
+  {
+    throw new apiError(500,"Something went wrong")
+  }
+  
+  for(let shop of shops)
+  {
+    await Rent.addMonthlyRent(shop.shop_no)
+  }
+
+  res.status(200).json(
+    new apiResponse(200,{},"Rent added successfully")
+  )
+
+
+})
+const getRentsofStore=asyncHandler(async(req,res)=>{
+  const shop_no=req.query.shop_no
+  if(!shop_no)
+  {
+    throw new apiError(400,"Shop umber is required")
+  }
+
 })
 
 const payBill=asyncHandler(async(req,res)=>{
   //store owner will pay bill
 })
-const getUnallocatedShopBills=asyncHandler((req,res)=>{
 
-})
-const payBillForUnallocatedShop=asyncHandler(async(req,res)=>{
-  //pay bill for unallocated shop
-})
 
-const getAllocatedShopsWithStore=asyncHandler(async(req,res)=>{
-  //get 
-})
+
 
 const getActiveBillsOfStore=asyncHandler(async(req,res)=>{
   //get active bills of a store
+
+  const shop_no=req.query.shop_no
+  if(!shop_no)
+  {
+    throw new apiError(400,"Shop no is required")
+  }
+  const bills=await Bill.getActiveBills(shop_no)
+  if(!bills)
+  {
+    throw new apiError(5000,"Sometjing went wrong")
+  }
+  res.status(500).json(
+    new apiResponse(200,bills,"Bill fetched successfully")
+  )
 })
 
 const getTillDateDayByDayReveneueOfStore=asyncHandler(async(req,res)=>{
@@ -222,4 +307,4 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
     });
   });
   
-export {getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore}
+export {getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore}

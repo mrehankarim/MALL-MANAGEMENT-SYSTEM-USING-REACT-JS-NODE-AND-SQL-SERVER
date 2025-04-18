@@ -11,7 +11,7 @@ const verifyCustomer=asyncHandler(async(req,res,next)=>{
     }
     else
     {
-        throw new apiError(300,"Unauthorized Access")
+        throw new apiError(401,"Unauthorized Access")
     }
     
 })
