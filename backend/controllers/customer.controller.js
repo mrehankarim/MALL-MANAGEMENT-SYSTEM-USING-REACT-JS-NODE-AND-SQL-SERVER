@@ -1,11 +1,9 @@
 import asyncHandler from "../utils/asyncHandler.js"
 import apiError from '../utils/apiError.js'
 import apiResponse from '../utils/apiResponse.js'
-import dotenv from "dotenv"
 import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
-dotenv.config()
 const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     //user would be loggedIn while inserting daily revenue
     //dont take store_id from user in form just do it programmtically on front end
@@ -36,7 +34,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     const bills=await Bill.getActiveBills(shop_no)
     if(!bills)
     {
-      throw new apiError(5000,"Sometjing went wrong")
+      throw new apiError(5000,"Something went wrong")
     }
     res.status(500).json(
       new apiResponse(200,bills,"Bill fetched successfully")
@@ -63,3 +61,11 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
   })
 
   export {insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent}
+
+  //customer can get active rents
+  //can get total revenue of till date of month
+  //can get month by month sales record
+  //pay bill
+  //get active bill
+  //get active rents
+  //pay rents
