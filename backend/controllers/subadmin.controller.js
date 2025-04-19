@@ -1,7 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js"
 import apiError from '../utils/apiError.js'
 import apiResponse from '../utils/apiResponse.js'
-import dotenv from "dotenv"
 import Shop from "../models/Shop.Model.js"
 import User from "../models/user.model.js"
 import Papa from "papaparse"
@@ -10,7 +9,6 @@ import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
 
-dotenv.config()
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
@@ -214,30 +212,12 @@ const getRentsofStore=asyncHandler(async(req,res)=>{
 
 })
 
-const payBill=asyncHandler(async(req,res)=>{
-  //store owner will pay bill
-})
 
 
 
 
-const getActiveBillsOfStore=asyncHandler(async(req,res)=>{
-  //get active bills of a store
 
-  const shop_no=req.query.shop_no
-  if(!shop_no)
-  {
-    throw new apiError(400,"Shop no is required")
-  }
-  const bills=await Bill.getActiveBills(shop_no)
-  if(!bills)
-  {
-    throw new apiError(5000,"Sometjing went wrong")
-  }
-  res.status(500).json(
-    new apiResponse(200,bills,"Bill fetched successfully")
-  )
-})
+
 
 const getTillDateDayByDayReveneueOfStore=asyncHandler(async(req,res)=>{
   //get day by day sales of store
@@ -308,3 +288,14 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
   });
   
 export {getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore}
+
+//->deactivate a store
+//->remove a store
+//->remove a customer
+//->updateShop->remove old record and insert with new data(keep shop id same)
+//->deleteashop->it should also delete all it's asssociated data like store that was in it
+//->gross revenue of mall->till date in that month
+//->expenses of mall->till date in month
+//->net profit of mall->till date in month
+//->active subscribtions of mall
+//->all subscriptions of mall->with date of subscription
