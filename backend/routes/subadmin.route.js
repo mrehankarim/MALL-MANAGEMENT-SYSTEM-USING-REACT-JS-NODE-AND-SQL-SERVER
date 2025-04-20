@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getExpensesOfMall,getTotalRevenueOfMall,addCustomer, getAllShops,addShopsInBulk,allocateShopToStore, activateStore,getAllStores, insertBill, getBillsofShop,addMonthlyRentofStore,updateRent } from "../controllers/subadmin.controller.js";
+import { addCustomer, getAllShops,addShopsInBulk,allocateShopToStore, activateStore,getAllStores, insertBill, getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback } from "../controllers/subadmin.controller.js";
 import verifyJwt from "../middleware/auth.middleware.js";
 import verifySubAdmin from '../middleware/verfiySubAdmin.js'
 import { upload } from "../utils/multer.js";
@@ -20,4 +20,6 @@ router.route('/revenue').get(verifyJwt,verifySubAdmin,getTotalRevenueOfMall)
 router.route('/expense').get(verifyJwt,verifySubAdmin,getExpensesOfMall)
 router.route('/add/monthlyrent').post(verifyJwt,verifySubAdmin,addMonthlyRentofStore)
 router.route('/update/rent').put(verifyJwt,verifySubAdmin,updateRent)
+router.route('/add/feedback').post(verifyJwt, verifySubAdmin, addFeedback);
+router.route('/customersfeedback').get(getCustomerFeedback);
 export default router
