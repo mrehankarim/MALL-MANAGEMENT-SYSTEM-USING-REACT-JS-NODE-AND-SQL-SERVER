@@ -304,6 +304,21 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
 
   })
   const getTotalRevenueOfMall=asyncHandler(async(req,res)=>{
+    const username=req.user?.username
+    const date=req.query.date
+    if(!date)
+    {
+      throw new apiError(400,"Date is required")
+    }
+    const revenue=await Rent.getRevenue(username,date)
+    if(!revenue)
+    {
+      throw new apiError(500,"Internal server error")
+    }
+    res.status(200).json(
+      new apiResponse(200,revenue,"Revenue fetched successfully")
+    )
+  })
 
   const addFeedback=asyncHandler(async(req, res)=>{
 
@@ -345,24 +360,6 @@ const getCustomerFeedback=asyncHandler(async(req, res)=>{
       new apiResponse(200,message,'Customers Feedback Fetched successfully')
     )
 })
-
-export {getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback}
-    const username=req.user?.username
-    const date=req.query.date
-    if(!date)
-    {
-      throw new apiError(400,"Date is required")
-    }
-    const revenue=await Rent.getRevenue(username,date)
-    if(!revenue)
-    {
-      throw new apiError(500,"Internal server error")
-    }
-    res.status(200).json(
-      new apiResponse(200,revenue,"Revenue fetched successfully")
-    )
-  })
-
 const getExpensesOfMall=asyncHandler(async(req,res)=>{
   const username=req.user?.username
   const date=req.query.date
@@ -380,7 +377,7 @@ const getExpensesOfMall=asyncHandler(async(req,res)=>{
   )
 })
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent}
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it
