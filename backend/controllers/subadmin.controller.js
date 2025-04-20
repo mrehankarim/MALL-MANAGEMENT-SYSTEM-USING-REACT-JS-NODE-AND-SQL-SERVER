@@ -8,6 +8,7 @@ import fs from "fs"
 import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
+import Feedback from "../models/Feedback.Model.js"
 
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -302,8 +303,81 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
     )
 
   })
+  const getTotalRevenueOfMall=asyncHandler(async(req,res)=>{
+    const username=req.user?.username
+    const date=req.query.date
+    if(!date)
+    {
+      throw new apiError(400,"Date is required")
+    }
+    const revenue=await Rent.getRevenue(username,date)
+    if(!revenue)
+    {
+      throw new apiError(500,"Internal server error")
+    }
+    res.status(200).json(
+      new apiResponse(200,revenue,"Revenue fetched successfully")
+    )
+  })
 
-export {getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent}
+  const addFeedback=asyncHandler(async(req, res)=>{
+
+    const {message, rating}=req.body
+    const username=req.user?.username
+
+    if([message, rating].some((field)=>{
+      field==undefined || field.trim()==""
+    }))
+    {
+      throw new apiError(400,"All fields are required")
+    }
+
+    if(isNaN(rating) || rating<0.0 || rating>5.0){
+      throw new apiError(400, "Invalid Rating entered");
+    }
+
+    const feedback=await Feedback.addingFeedback(username, message, rating);
+    if(!feedback)
+    {
+      throw new apiError(500,"Something went wrong")
+    }
+    res.status(200).json(
+      new apiResponse(200,message,'Feedback added successfully')
+    )
+})
+
+const getCustomerFeedback=asyncHandler(async(req, res)=>{
+
+  const username=req.user?.username
+  
+    const getFeedback=await Feedback.gettingCustomerFeedback(username);
+
+    if(!getFeedback){
+      throw new apiError(400, "Something went wrong");
+    }  
+
+    res.status(200).json(
+      new apiResponse(200,message,'Customers Feedback Fetched successfully')
+    )
+})
+const getExpensesOfMall=asyncHandler(async(req,res)=>{
+  const username=req.user?.username
+  const date=req.query.date
+  if(!date)
+  {
+    throw new apiError(400,"Date is required")
+  }
+  const expenses=await Rent.getExpenses(username,date)
+  if(!expenses)
+  {
+    throw new apiError(500,"Internal server error")
+  }
+  res.status(200).json(
+    new apiResponse(200,expenses,"Expenses fetched successfully")
+  )
+})
+
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it
