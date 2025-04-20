@@ -312,6 +312,5 @@ export {getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore
 //->net profit of mall->till date in month
 //->active subscribtions of mall
 //->all subscriptions of mall->with date of subscription
-
 //->buy->price 25$-> wo apny account details dega aur subscription purchase krlega
 
