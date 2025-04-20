@@ -287,15 +287,31 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
     });
   });
   
-export {getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore}
+  const updateRent=asyncHandler(async (req,res)=>{
+    const {shop_no,rent}=req.body
+    if(!shop_no || !rent)
+    {
+      throw new apiError(400,"All fields are required")
+    }
+    if(!await Rent.updateRent(shop_no,rent))
+    {
+      throw new apiError(500,'something went wrong')
+    }
+    res.status(200).json(
+      new apiResponse(200,{},'Rent update successfully')
+    )
 
-//->deactivate a store
-//->remove a store
-//->remove a customer
-//->updateShop->remove old record and insert with new data(keep shop id same)
+  })
+
+export {getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent}
+
+
 //->deleteashop->it should also delete all it's asssociated data like store that was in it
 //->gross revenue of mall->till date in that month
 //->expenses of mall->till date in month
 //->net profit of mall->till date in month
 //->active subscribtions of mall
 //->all subscriptions of mall->with date of subscription
+
+//->buy->price 25$-> wo apny account details dega aur subscription purchase krlega
+
