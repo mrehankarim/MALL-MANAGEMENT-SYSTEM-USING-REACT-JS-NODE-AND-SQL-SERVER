@@ -53,6 +53,36 @@ const Rent={
                 
             }
             
+        },
+        async getRevenue(username,date)
+        {
+            try {
+                const pool=await poolPromise
+                const result=await pool.request().input('subadmin_username',sql.VarChar,username)
+                .input('date',sql.Date,date)
+                .execute('GrossRevenueOfMall')
+                return result.recordset
+                
+            } catch (error) {
+                console.log('Error in fetching revenue',error)
+                
+            }
+            
+        },
+        async getExpenses(username,date)
+        {
+            try {
+                const pool=await poolPromise
+                const result=await pool.request().input('subadmin_username',sql.VarChar,username)
+                .input('date',sql.Date,date)
+                .execute('ExpensesOfMall')
+                return result.recordset
+                
+            } catch (error) {
+                console.log('Error in fetching expeses',error)
+                
+            }
+            
         }
 
 }
