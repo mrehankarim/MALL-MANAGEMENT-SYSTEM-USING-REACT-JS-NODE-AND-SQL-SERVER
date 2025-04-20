@@ -431,12 +431,12 @@ const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
       throw new apiError(400, "Future date can not be entered")
     }
 
-    const checkPayrolls=await Payroll.IsPayrollGenerated('subscriber2', date);
+    const checkPayrolls=await Payroll.IsPayrollGenerated(username, date);
     if(checkPayrolls.length>0){
       throw new apiError(400, "Payrolls already generated for this month");
     }
 
-    const generatedPayrolls=await Payroll.generatingEmployeesMonthlyPayroll('subscriber2', date);
+    const generatedPayrolls=await Payroll.generatingEmployeesMonthlyPayroll(username, date);
     if(!generateMonthlyPayroll){
       throw new apiError(400, "Something went wrong")
     }
