@@ -1,9 +1,5 @@
 import { Router } from "express";
-<<<<<<< HEAD
 import { addCustomer, getAllShops,addShopsInBulk,allocateShopToStore, activateStore,getAllStores, insertBill, getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback } from "../controllers/subadmin.controller.js";
-=======
-import { getExpensesOfMall,getTotalRevenueOfMall,addCustomer, getAllShops,addShopsInBulk,allocateShopToStore, activateStore,getAllStores, insertBill, getBillsofShop,addMonthlyRentofStore,updateRent } from "../controllers/subadmin.controller.js";
->>>>>>> 81d235f92cc8f20f0a9b9a0e3268d7e4d7107966
 import verifyJwt from "../middleware/auth.middleware.js";
 import verifySubAdmin from '../middleware/verfiySubAdmin.js'
 import { upload } from "../utils/multer.js";
