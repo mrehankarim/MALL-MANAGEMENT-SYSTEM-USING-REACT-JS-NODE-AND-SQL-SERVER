@@ -83,7 +83,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
       throw new apiError(500,"Something went wrong")
     }
     res.status(200).json(
-      new apiResponse(200,message,'Feedback added successfully')
+      new apiResponse(200,feedback,'Feedback added successfully')
     )
 })
 
