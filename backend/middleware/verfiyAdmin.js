@@ -3,8 +3,6 @@ import asyncHandler from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
 dotenv.config()
-
-
 const verifyAdmin=asyncHandler(async(req,res,next)=>{
     if(req.user?.role=="admin")
     {

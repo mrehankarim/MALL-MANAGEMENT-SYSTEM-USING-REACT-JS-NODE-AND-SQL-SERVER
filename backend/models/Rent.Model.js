@@ -37,6 +37,22 @@ const Rent={
                 
             }
             
+        },
+        async updateRent(shop_no,rent)
+        {
+            try {
+                const pool =await poolPromise
+                await pool.request().input('shop_no',sql.Int,shop_no)
+                .input('new_rent',sql.Decimal,rent)
+                .execute('UpdateRent')
+                return true
+                
+            } catch (error) {
+                console.log('Error in updating rent')
+                return false
+                
+            }
+            
         }
 
 }
