@@ -4,6 +4,7 @@ import apiResponse from '../utils/apiResponse.js'
 import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
+import DailyStoreRevenue from "../models/DAILY_STORE_REVENUE.MODEL.js"
 import Feedback from "../models/Feedback.Model.js"
 const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     //user would be loggedIn while inserting daily revenue
@@ -57,10 +58,25 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
       new apiResponse(200,rents,'Rents fetched successfully')
     )
   })
-  const payBill=asyncHandler(async(req,res)=>{
-    //store owner will pay bill
+  const getRevenueBetweenDates=asyncHandler(async(req,res)=>{
+    const {store_id,startDate,endDate}=req.query
+    if([store_id,startDate,endDate].some((field)=>field==""))
+    {
+      throw new apiError(400,"All fields are rquired")
+    }
+    if(new Date(startDate)>new Date(endDate))
+    {
+      throw new apiError(400,"End date must be greater than start date")
+    }
+    const revenue=await DailyStoreRevenue.getDailytRevenue(startDate,endDate,store_id)
+    if(!revenue)
+    {
+      throw new apiError(500,"Internal server Error")
+    }
+    res.status(200).json(
+      new apiResponse(200,revenue,'Revenue fetched successfully')
+    )
   })
-
   const addFeedback=asyncHandler(async(req, res)=>{
 
     const {message, rating}=req.body
@@ -87,7 +103,11 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     )
 })
 
-  export {insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent, addFeedback}
+  const payBill=asyncHandler(async(req,res)=>{
+    //store owner will pay bill
+  })
+
+  export {getRevenueBetweenDates,insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback}
 
   //customer can get active rents
   //can get total revenue of till date of month

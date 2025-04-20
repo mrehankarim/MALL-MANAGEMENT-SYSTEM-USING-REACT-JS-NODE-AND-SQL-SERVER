@@ -395,7 +395,6 @@ const getEmployeePayrollStatus=asyncHandler(async(req, res)=>{
     }
 
     const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
-    console.log(date);
 
     if(date>today){
       throw new apiError(400, "Future date can not be entered")
@@ -417,7 +416,39 @@ const getEmployeePayrollStatus=asyncHandler(async(req, res)=>{
     )
 })
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeePayrollStatus}
+const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
+
+    const username=req.user?.username
+    const {date}=req.body
+
+    if (!date || isNaN(Date.parse(date))) {
+      throw new apiError(400, "Invalid date entered");
+    }
+
+    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    if(date>today){
+      throw new apiError(400, "Future date can not be entered")
+    }
+
+    const checkPayrolls=await Payroll.IsPayrollGenerated('subscriber2', date);
+    if(checkPayrolls.length>0){
+      throw new apiError(400, "Payrolls already generated for this month");
+    }
+
+    const generatedPayrolls=await Payroll.generatingEmployeesMonthlyPayroll('subscriber2', date);
+    if(!generateMonthlyPayroll){
+      throw new apiError(400, "Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200, generatedPayrolls, "Monthly Payrolls generated succesfully")
+    );
+
+})
+
+
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeePayrollStatus, generateMonthlyPayroll}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it
@@ -426,6 +457,5 @@ export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShops
 //->net profit of mall->till date in month
 //->active subscribtions of mall
 //->all subscriptions of mall->with date of subscription
-
 //->buy->price 25$-> wo apny account details dega aur subscription purchase krlega
 
