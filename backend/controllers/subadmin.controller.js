@@ -9,6 +9,7 @@ import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
 import Feedback from "../models/Feedback.Model.js"
+import Attendance from "../models/Attendance.Model.js"
 
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -377,7 +378,25 @@ const getExpensesOfMall=asyncHandler(async(req,res)=>{
   )
 })
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback}
+const getEmployeesAttendance=asyncHandler(async(req, res)=>{
+    const username=req.user?.username
+    const {date}=req.body
+
+    if (!date || isNaN(Date.parse(date))) {
+      throw new apiError(400, "Invalid date entered");
+    }
+
+    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    if(date>today){
+      throw new apiError(400, "Future date can not be entered")
+    }
+
+
+
+})
+
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it
