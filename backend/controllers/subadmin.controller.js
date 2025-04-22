@@ -392,7 +392,18 @@ const getEmployeesAttendance=asyncHandler(async(req, res)=>{
       throw new apiError(400, "Future date can not be entered")
     }
 
+    const attendance=await Attendance.getEmployeeAttendanceBySubadmin('subscriber2', date);
+    if(!attendance){
+      throw new apiError(400, "Something went wrong");
+    }
 
+    if(attendance.length===0){
+      throw new apiResponse(200, attendance, "No data found");
+    }
+
+    res.status(200).json(
+      new apiResponse(200, attendance, "Employees attendance fetched successfully")
+    );
 
 })
 
