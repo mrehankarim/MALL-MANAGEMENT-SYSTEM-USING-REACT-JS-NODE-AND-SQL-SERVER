@@ -10,6 +10,7 @@ import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
 import Feedback from "../models/Feedback.Model.js"
 import Attendance from "../models/Attendance.Model.js"
+import Payroll from "../models/Payroll.Model.js"
 
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -343,7 +344,7 @@ const addShopsInBulk = asyncHandler(async (req, res) => {
       throw new apiError(500,"Something went wrong")
     }
     res.status(200).json(
-      new apiResponse(200,message,'Feedback added successfully')
+      new apiResponse(200,feedback,'Feedback added successfully')
     )
 })
 
@@ -357,10 +358,17 @@ const getCustomerFeedback=asyncHandler(async(req, res)=>{
       throw new apiError(400, "Something went wrong");
     }  
 
+    if (getFeedback.length === 0) {
+      return res.status(404).json(
+          new apiResponse(404, [], "No customer feedback found")
+      );
+  }
+
     res.status(200).json(
-      new apiResponse(200,message,'Customers Feedback Fetched successfully')
+      new apiResponse(200,getFeedback,'Customers Feedback Fetched successfully')
     )
 })
+
 const getExpensesOfMall=asyncHandler(async(req,res)=>{
   const username=req.user?.username
   const date=req.query.date
@@ -379,7 +387,8 @@ const getExpensesOfMall=asyncHandler(async(req,res)=>{
 })
 
 const getEmployeesAttendance=asyncHandler(async(req, res)=>{
-    const username=req.user?.username
+
+  const username=req.user?.username
     const {date}=req.body
 
     if (!date || isNaN(Date.parse(date))) {
@@ -403,11 +412,61 @@ const getEmployeesAttendance=asyncHandler(async(req, res)=>{
 
     res.status(200).json(
       new apiResponse(200, attendance, "Employees attendance fetched successfully")
+    )
+})
+
+  
+const getEmployeePayrollStatus=asyncHandler(async(req, res)=>{
+
+    const username=req.user?.username
+    const {date}=req.body
+
+    if (!date || isNaN(Date.parse(date))) {
+        throw new apiError(400, "Invalid date entered");
+    }
+
+    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    if(date>today){
+      throw new apiError(400, "Future date can not be entered")
+    }
+
+    const payrollStatus=await Payroll.gettingEmployeePayrollStatus (username, date);
+    if(!payrollStatus){
+      throw new apiError(400, "Something went wrong");
+    }
+
+    if (payrollStatus.length === 0) {
+      return res.status(404).json(
+          new apiResponse(404, [], "No employee payroll status found")
+      );
+    }
+
+    res.status(200).json(
+      new apiResponse(200, payrollStatus, "Employees payroll status fetched successfully")
+    )
+})
+
+const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
+
+    
+    const checkPayrolls=await Payroll.IsPayrollGenerated(username, date);
+    if(checkPayrolls.length>0){
+      throw new apiError(400, "Payrolls already generated for this month");
+    }
+
+    const generatedPayrolls=await Payroll.generatingEmployeesMonthlyPayroll(username, date);
+    if(!generateMonthlyPayroll){
+      throw new apiError(400, "Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200, generatedPayrolls, "Monthly Payrolls generated succesfully")
     );
 
 })
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance}
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it
