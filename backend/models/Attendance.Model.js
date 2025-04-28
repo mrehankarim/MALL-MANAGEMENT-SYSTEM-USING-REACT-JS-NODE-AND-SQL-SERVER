@@ -15,9 +15,40 @@ const Attendance={
             console.log("Error in getting employees attendance",error)
             return false
         }
+    },
 
+    async generateEmployeeAttendance(date, username){
+        
+        try{
+
+            //yahan abhi stored procedure bnana he iska
+
+
+        }catch(error){
+            console.log("Error in generating employees attendance",error)
+            return false;
+        }
+    },
+
+    async saveEmployeesAttendance(records){
+
+        try{
+            const pool = await poolPromise;
+            for (const record of records) {
+                await pool.request()
+                    .input('emp_ssn', sql.VarChar, record.ssn)
+                    .input('attendance_status', sql.VarChar, record.status)
+                    .input('date', sql.Date, record.date) // ye daalna he abhi
+                    .execute('SetAttendance'); 
+            }
+            attendanceRecords.length = 0;
+            return true;
+
+        }catch(error){
+            console.log("Error in saving employees attendance",error)
+            return false;
+        }
     }
-
 
 }
 

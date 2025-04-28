@@ -4,7 +4,7 @@ import apiResponse from '../utils/apiResponse.js'
 import Shop from "../models/Shop.Model.js"
 import User from "../models/user.model.js"
 import Papa from "papaparse"
-import fs from "fs"
+import fs, { stat } from "fs"
 import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
@@ -466,7 +466,68 @@ const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
 
 })
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll}
+const attendanceRecord=[];
+
+const updateAttendance=asyncHandler(async(req, res)=>{
+
+  const {ssn, status, date}=req.body;
+
+  if([ssn, status, date].some((field)=>{
+    field==undefined || field.trim()==""
+  }))
+  {
+    throw new apiError(400,"All fields are required")
+  }
+
+  if (!date || isNaN(Date.parse(date))) {
+    throw new apiError(400, "Invalid date entered");
+  }
+
+  const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    if(date>today){
+      throw new apiError(400, "Future date can not be entered")
+    }
+
+  if(status!="present" && status!="absent"){
+    throw new apiError(400, "attendance status invalid");
+  }
+
+  attendanceRecords.push({ //isko confirm krna he abhi ky bar bar push krny pr overwrite hoti he ya multiple times push hota he
+    ssn,
+    status: status.toLowerCase(),
+    date: new Date(date).toISOString().split('T')[0]
+  });
+
+  res.status(200).json(
+    new apiResponse(200, attendanceRecord, "Employee attendance added in array successfully")
+  );
+})
+
+const saveAttendance=asyncHandler(async(req, res)=>{
+
+  if (attendanceRecords.length === 0) {
+    throw new apiError(400, "No attendance records to save");
+  }
+
+  //yahn baki verifications + save krwany ky liye call bhejni abhi
+
+});
+
+const generateAttendance=asyncHandler(async(req, res)=>{
+
+  const {date}=req.body
+  const username=req.user?.username
+
+  if (!date || isNaN(Date.parse(date))) {
+    throw new apiError(400, "Invalid date entered");
+  }
+
+  //yahn baki verifications + generate krwany ky liye call bhejni abhi
+
+});
+
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it
