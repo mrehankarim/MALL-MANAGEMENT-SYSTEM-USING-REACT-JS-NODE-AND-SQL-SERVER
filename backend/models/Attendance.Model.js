@@ -37,8 +37,8 @@ const Attendance={
             for (const record of records) {
                 await pool.request()
                     .input('emp_ssn', sql.VarChar, record.ssn)
-                    .input('attendance_status', sql.VarChar, record.status)
-                    .input('date', sql.Date, record.date) // ye daalna he abhi
+                    .input('status', sql.VarChar, record.status)
+                    .input('date', sql.Date, record.date)
                     .execute('SetAttendance'); 
             }
             attendanceRecords.length = 0;
@@ -49,7 +49,6 @@ const Attendance={
             return false;
         }
     }
-
 }
 
 export default Attendance

@@ -510,7 +510,15 @@ const saveAttendance=asyncHandler(async(req, res)=>{
     throw new apiError(400, "No attendance records to save");
   }
 
-  //yahn baki verifications + save krwany ky liye call bhejni abhi
+  const saving = await Attendance.saveEmployeesAttendance(attendanceRecords);
+
+  if(!saving){
+    throw new apiError(400, "something went wrong");
+  }
+
+  res.status(200).json(
+    new apiResponse(200, attendanceRecord, "Employee attendance saved successfully")
+  );
 
 });
 
