@@ -22,10 +22,10 @@ router.route('/add/monthlyrent').post(verifyJwt,verifySubAdmin,addMonthlyRentofS
 router.route('/update/rent').put(verifyJwt,verifySubAdmin,updateRent)
 router.route('/add/feedback').post(verifyJwt, verifySubAdmin, addFeedback);
 router.route('/customersfeedback').get(verifyJwt, verifySubAdmin, getCustomerFeedback);
-router.route('/employeesattendance').get(getEmployeesAttendance); /////
+router.route('/employeesattendance').get(verifyJwt, verifySubAdmin, getEmployeesAttendance); 
 router.route('/employeespayroll').get(verifyJwt, verifySubAdmin, getEmployeePayrollStatus);
 router.route('/generatepayrolls').post(verifyJwt, verifySubAdmin, generateMonthlyPayroll);
-router.route('/update/attendance').post(updateAttendance); /////
-router.route('/save/attendance').post(saveAttendance); /////
-router.route('/generate/attendance').post(generateAttendance); /////
+router.route('/update/attendance').post(verifyJwt, verifySubAdmin, updateAttendance); 
+router.route('/save/attendance').post(verifyJwt, verifySubAdmin, saveAttendance); 
+router.route('/generate/attendance').post(verifyJwt, verifySubAdmin, generateAttendance); 
 export default router

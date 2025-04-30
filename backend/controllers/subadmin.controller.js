@@ -401,7 +401,7 @@ const getEmployeesAttendance=asyncHandler(async(req, res)=>{
       throw new apiError(400, "Future date can not be entered")
     }
 
-    const attendance=await Attendance.getEmployeeAttendanceBySubadmin('subscriber2', date);
+    const attendance=await Attendance.getEmployeeAttendanceBySubadmin(username, date);
     if(!attendance){
       throw new apiError(400, "Something went wrong");
     }
@@ -466,9 +466,11 @@ const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
 
 })
 
-const attendanceRecord=[];
+const attendanceRecords=[];
 
 const updateAttendance=asyncHandler(async(req, res)=>{
+
+  //here i'm assuming that subadmin ko sirf apny hi employees show horhy hongy jin me sy wo select kr skta he... is liye ssn validate krny ki zrurt ni
 
   const {ssn, status, date}=req.body;
 
@@ -477,6 +479,10 @@ const updateAttendance=asyncHandler(async(req, res)=>{
   }))
   {
     throw new apiError(400,"All fields are required")
+  }
+
+  if(isNaN(ssn)){
+    throw new apiError(400, "invlaid ssn");
   }
 
   if (!date || isNaN(Date.parse(date))) {
@@ -493,14 +499,30 @@ const updateAttendance=asyncHandler(async(req, res)=>{
     throw new apiError(400, "attendance status invalid");
   }
 
-  attendanceRecords.push({ //isko confirm krna he abhi ky bar bar push krny pr overwrite hoti he ya multiple times push hota he
-    ssn,
-    status: status.toLowerCase(),
-    date: new Date(date).toISOString().split('T')[0]
-  });
+  const existingIndex = attendanceRecords.findIndex(
+    (record) => record.ssn === ssn && record.date === new Date(date).toISOString().split('T')[0]
+  );
+
+  // issy ye ensure horha he ky agr aik employee ko present krky baad me ussi time dobara absent krdia, to value overwrite ho jaye gi 
+  if (existingIndex !== -1) {
+      
+      attendanceRecords[existingIndex] = {
+          ssn,
+          status: status.toLowerCase(),
+          date: new Date(date).toISOString().split('T')[0],
+      };
+  } else {
+      attendanceRecords.push({
+          ssn,
+          status: status.toLowerCase(),
+          date: new Date(date).toISOString().split('T')[0],
+      });
+  }
+
+  //console.log(attendanceRecords);
 
   res.status(200).json(
-    new apiResponse(200, attendanceRecord, "Employee attendance added in array successfully")
+    new apiResponse(200, "Employee attendance added in array successfully")
   );
 })
 
@@ -517,7 +539,7 @@ const saveAttendance=asyncHandler(async(req, res)=>{
   }
 
   res.status(200).json(
-    new apiResponse(200, attendanceRecord, "Employee attendance saved successfully")
+    new apiResponse(200, saving, "Employee attendance saved successfully")
   );
 
 });
@@ -531,8 +553,21 @@ const generateAttendance=asyncHandler(async(req, res)=>{
     throw new apiError(400, "Invalid date entered");
   }
 
-  //yahn baki verifications + generate krwany ky liye call bhejni abhi
+  const today = new Date().toISOString().split('T')[0]; 
 
+    if(date>today){
+      throw new apiError(400, "Future date can not be entered")
+    }
+
+    const generate = await Attendance.generateEmployeeAttendance(date, username);
+
+    if(!generate){
+      throw new apiError(400, "something went wrong");
+    }
+
+    res.status(200).json(
+      new apiResponse(200, generate, "Employee attendance generated successfully")
+    );
 });
 
 export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance}

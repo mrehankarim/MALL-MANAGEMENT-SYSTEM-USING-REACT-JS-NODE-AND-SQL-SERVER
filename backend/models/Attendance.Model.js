@@ -20,10 +20,12 @@ const Attendance={
     async generateEmployeeAttendance(date, username){
         
         try{
-
-            //yahan abhi stored procedure bnana he iska
-
-
+            const pool = await poolPromise
+            const record = await pool.request()
+            .input('subadmin_username', sql.VarChar, username)
+            .input('date', sql.Date, date)
+            .execute('GenerateAttendanceBySubadmin')
+            return true;
         }catch(error){
             console.log("Error in generating employees attendance",error)
             return false;
@@ -41,7 +43,7 @@ const Attendance={
                     .input('date', sql.Date, record.date)
                     .execute('SetAttendance'); 
             }
-            attendanceRecords.length = 0;
+            records.length = 0;
             return true;
 
         }catch(error){
