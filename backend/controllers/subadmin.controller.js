@@ -10,6 +10,7 @@ import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
 import Feedback from "../models/Feedback.Model.js"
 import Payroll from "../models/Payroll.Model.js"
+import Employee from "../models/Employee.Model.js"
 
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -444,11 +445,49 @@ const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
     res.status(200).json(
       new apiResponse(200, generatedPayrolls, "Monthly Payrolls generated succesfully")
     );
-
 })
 
+const addNewEmployee=asyncHandler(async(req, res)=>{
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeePayrollStatus, generateMonthlyPayroll}
+    // name, email, phone#, role_id, salary, (sudadmin_username)
+    const {name, email, phone, role_id, salary}=req.body
+    const username=req.user?.username
+
+    if([name, email, phone, role_id, salary].some((field)=>{
+      field==undefined || field.trim()==""
+    }))
+    {
+      throw new apiError(400,"All fields are required")
+    }
+
+    if(!validateEmail(email))
+    {
+        throw new apiError(400,"Inavlid email")
+    }
+    
+    let existingEmployee = await Employee.getEmployeeByEmail(email);
+    
+    if(existingEmployee.length>0)
+    {
+        throw new apiError(400,"email already exists")   
+    }
+
+    if(isNaN(phone) || phone.length != 11){
+      throw new apiError(400, "Invalid phone number");
+    }
+
+    if(isNaN(role_id)){
+      throw new apiError(400, "Invalid role id");
+    }
+
+    if(isNaN(salary) || parseFloat(value) <= 0){
+      throw new apiError(400, "Invalid salary");
+    }
+
+});
+
+
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeePayrollStatus, generateMonthlyPayroll, addNewEmployee}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it

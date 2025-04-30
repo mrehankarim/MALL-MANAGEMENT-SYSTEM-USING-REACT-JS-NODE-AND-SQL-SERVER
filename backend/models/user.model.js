@@ -73,7 +73,6 @@ const User={
             console.log("Error in MatchCustomer Admin");
         }
     }
-    
 }
 export default User
 
