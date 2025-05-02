@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addCustomer, getAllShops,addShopsInBulk,allocateShopToStore, activateStore,getAllStores, insertBill, getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getTotalRevenueOfMall, getExpensesOfMall, getEmployeePayrollStatus, generateMonthlyPayroll } from "../controllers/subadmin.controller.js";
+import { addCustomer, getAllShops,addShopsInBulk,allocateShopToStore, activateStore,getAllStores, insertBill, getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getTotalRevenueOfMall, getExpensesOfMall, getEmployeePayrollStatus, generateMonthlyPayroll, getEmployeesAttendance, updateAttendance, saveAttendance, generateAttendance } from "../controllers/subadmin.controller.js";
 import verifyJwt from "../middleware/auth.middleware.js";
 import verifySubAdmin from '../middleware/verfiySubAdmin.js'
 import { upload } from "../utils/multer.js";
@@ -22,6 +22,10 @@ router.route('/add/monthlyrent').post(verifyJwt,verifySubAdmin,addMonthlyRentofS
 router.route('/update/rent').put(verifyJwt,verifySubAdmin,updateRent)
 router.route('/add/feedback').post(verifyJwt, verifySubAdmin, addFeedback);
 router.route('/customersfeedback').get(verifyJwt, verifySubAdmin, getCustomerFeedback);
+router.route('/employeesattendance').get(verifyJwt, verifySubAdmin, getEmployeesAttendance); 
 router.route('/employeespayroll').get(verifyJwt, verifySubAdmin, getEmployeePayrollStatus);
 router.route('/generatepayrolls').post(verifyJwt, verifySubAdmin, generateMonthlyPayroll);
+router.route('/update/attendance').post(verifyJwt, verifySubAdmin, updateAttendance); 
+router.route('/save/attendance').post(verifyJwt, verifySubAdmin, saveAttendance); 
+router.route('/generate/attendance').post(verifyJwt, verifySubAdmin, generateAttendance); 
 export default router
