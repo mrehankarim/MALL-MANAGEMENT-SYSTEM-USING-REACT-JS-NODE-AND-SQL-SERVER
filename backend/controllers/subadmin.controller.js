@@ -450,19 +450,28 @@ const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
 const addNewEmployee=asyncHandler(async(req, res)=>{
 
     // name, email, phone#, role_id, salary, (sudadmin_username)
-    const {name, email, phone, role_id, salary}=req.body
-    const username=req.user?.username
+    const {ssn, name, email, phone, role_id, salary}=req.body
+    const username = req.user?.username
 
-    if([name, email, phone, role_id, salary].some((field)=>{
+    if([ssn, name, email, phone, role_id, salary].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
       throw new apiError(400,"All fields are required")
     }
 
+    if(isNaN(ssn)){
+      throw new apiError(400, "invalid ssn");
+    }
+
+    let existing=await Employee.getEmployeeBySSN(ssn);
+    if(existing.length>0){
+      throw new apiError(400,"ssn already exists")   
+    }
+
     if(!validateEmail(email))
     {
-        throw new apiError(400,"Inavlid email")
+        throw new apiError(400,"Invalid email")
     }
     
     let existingEmployee = await Employee.getEmployeeByEmail(email);
@@ -480,10 +489,18 @@ const addNewEmployee=asyncHandler(async(req, res)=>{
       throw new apiError(400, "Invalid role id");
     }
 
-    if(isNaN(salary) || parseFloat(value) <= 0){
+    if(isNaN(salary) || parseFloat(salary) <= 0){
       throw new apiError(400, "Invalid salary");
     }
 
+    let newEmployee = await Employee.addEmployee(ssn, name, email, phone, role_id, salary, username);
+    if(!newEmployee){
+      throw new apiError(400, "something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200, newEmployee, "New employee added succesfully")
+    );
 });
 
 

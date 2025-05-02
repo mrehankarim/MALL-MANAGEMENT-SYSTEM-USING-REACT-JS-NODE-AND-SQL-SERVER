@@ -24,5 +24,5 @@ router.route('/add/feedback').post(verifyJwt, verifySubAdmin, addFeedback);
 router.route('/customersfeedback').get(verifyJwt, verifySubAdmin, getCustomerFeedback);
 router.route('/employeespayroll').get(verifyJwt, verifySubAdmin, getEmployeePayrollStatus);
 router.route('/generatepayrolls').post(verifyJwt, verifySubAdmin, generateMonthlyPayroll);
-router.route('add/employee').post(addNewEmployee);
+router.route('/add/employee').post(verifyJwt, verifySubAdmin, addNewEmployee);
 export default router
