@@ -10,6 +10,7 @@ import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
 import Feedback from "../models/Feedback.Model.js"
 
+
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
