@@ -12,6 +12,7 @@ import Feedback from "../models/Feedback.Model.js"
 import Attendance from "../models/Attendance.Model.js"
 import Payroll from "../models/Payroll.Model.js"
 
+
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
