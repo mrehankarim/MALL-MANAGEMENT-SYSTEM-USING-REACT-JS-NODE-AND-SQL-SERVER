@@ -12,7 +12,7 @@ import { useTheme } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 
-const Navbar = () => {
+const Navbar = ({SignUp,SignIn,setSignUp,setSignIn}) => {
   const location = useLocation();
   const theme = useTheme();
 
@@ -53,8 +53,14 @@ const Navbar = () => {
               </HashLink>
             </Box>
             <Box>
-              <Button variant="outlined">Sign Up</Button>
-              <Button variant="outlined" sx={{ ml: 1 }}>
+              <Button variant="outlined" onClick={()=>{
+                setSignUp(prev=>!prev)
+                setSignIn(false)
+              }}>Sign Up</Button>
+              <Button variant="outlined" sx={{ ml: 1 }} onClick={()=>{
+                setSignIn(prev=>!prev)
+                setSignUp(false)
+              }}>
                 Login
               </Button>
             </Box>

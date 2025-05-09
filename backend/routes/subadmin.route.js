@@ -1,11 +1,10 @@
 import { Router } from "express";
-import { getTotalRevenueOfMall,getExpensesOfMall,addCustomer, getAllShops,addShopsInBulk,allocateShopToStore, activateStore,getAllStores, insertBill, getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getTotalRevenueOfMall, getExpensesOfMall, getEmployeePayrollStatus, generateMonthlyPayroll, getEmployeesAttendance, updateAttendance, saveAttendance, generateAttendance } from "../controllers/subadmin.controller.js";
+import { addCustomer, getAllShops,addShopsInBulk,allocateShopToStore, activateStore,getAllStores, insertBill, getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getTotalRevenueOfMall, getExpensesOfMall, getEmployeePayrollStatus, generateMonthlyPayroll, getEmployeesAttendance, updateAttendance, saveAttendance, generateAttendance } from "../controllers/subadmin.controller.js";
 import verifyJwt from "../middleware/auth.middleware.js";
 import verifySubAdmin from '../middleware/verfiySubAdmin.js'
 import { upload } from "../utils/multer.js";
 import fs from "fs"
 import { verify } from "crypto";
-import verifyCustomer from "../middleware/verifyCustomer.js";
 const router=Router()
 router.route("/shops").get(verifyJwt,verifySubAdmin,getAllShops)
 router.route("/addCustomer").post(verifyJwt,verifySubAdmin,addCustomer)

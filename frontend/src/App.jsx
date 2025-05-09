@@ -2,9 +2,11 @@ import React,{useState} from 'react';
 import { ThemeProvider } from '@emotion/react';
 import {CssBaseline} from '@mui/material';
 import {lightTheme,darkTheme} from "./theme.js"
-import AdminLayout from './componenets/AdminLayout';
-import Subscriber from './componenets/Subscriber.jsx';
+import SubscribersPage from './pages/admin/SubscribersPage.jsx';
 import Home from './pages/Home.jsx';
+import Dashboard from './pages/admin/Dashboard.jsx';
+import { store } from './redux/store.js';
+import {Provider } from "react-redux"
 import {createBrowserRouter,RouterProvider} from "react-router-dom"
 const App=()=>{
    const theme = darkTheme;
@@ -14,8 +16,12 @@ const App=()=>{
       element:<Home/>
     },
     {
-      path:"/admin",
-      element:<AdminLayout><Subscriber/></AdminLayout>
+      path:"/admin/subscriber",
+      element:<SubscribersPage/>
+    },
+    {
+      path:"/admin/dashboard",
+      element:<Dashboard/>
     }
    ])
   return (

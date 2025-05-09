@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Container, Typography, Stack, Link, Divider } from '@mui/material';
 import { useTheme } from '@emotion/react';
-
 const Footer = () => {
     const theme=useTheme()
     return (

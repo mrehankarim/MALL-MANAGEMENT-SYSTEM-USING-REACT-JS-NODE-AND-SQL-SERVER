@@ -96,7 +96,7 @@ const registerUser=asyncHandler(async (req,res)=>{
 
 const loginUser=asyncHandler(async(req,res)=>{
     const {email,password}=req.body //email can contain both email or username
-
+    console.log(email,password)
     let userRecord=await User.getUserByEmail(email)
     if(userRecord.length==0)
     {
@@ -162,4 +162,9 @@ const logOutUser=asyncHandler(async(req,res)=>{
         new apiResponse(200,{},"user logged out successfully")
      )
 })
-export {registerUser,loginUser,logOutUser}
+const getUserInfo=asyncHandler(async(req,res)=>{
+    const user=req.user
+    delete user['password']
+    res.json(new apiResponse(200,user,'User fetched Successfully'))
+})
+export {registerUser,loginUser,logOutUser,getUserInfo}
