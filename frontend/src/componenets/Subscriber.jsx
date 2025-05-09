@@ -19,9 +19,10 @@ const Subscriber = () => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://localhost:3000/api/v1/admin/activesubscribers', {
-                    headers: {
+                    headers: {            
                         'Accept': 'application/json',
                     },
+                    withCredentials:true
                 });
                 setSubscriptions(response.data.data);
                 setFilteredSubscriptions(response.data.data); // initial list

@@ -5,7 +5,7 @@ import {getActiveSubscriber,getAllSubscriber,getTotalRevenue,getTotalRevenueBySu
 import verifyJwt from "../middleware/auth.middleware.js";
 import verifyAdmin from '../middleware/verfiyAdmin.js'
 
-router.route('/activesubscribers').get(getActiveSubscriber)
+router.route('/activesubscribers').get(verifyJwt,verifyAdmin,getActiveSubscriber)
 router.route('/subscribers').get(verifyJwt,verifyAdmin,getAllSubscriber)
 router.route('/totalrevenue').get(verifyJwt,verifyAdmin,getTotalRevenue)
 router.route('/revenuebysubsciber').get(verifyJwt,verifyAdmin,getTotalRevenueBySubscriber)
