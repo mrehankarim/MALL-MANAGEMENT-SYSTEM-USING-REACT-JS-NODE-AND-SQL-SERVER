@@ -5,12 +5,12 @@ import {getRevenueBetweenDates, insertStoreDailyRevenue,getActiveRent,getActiveB
 
 const router=Router()
 router.route('/insertrevenue').post(verifyJwt,verifyCustomer,insertStoreDailyRevenue)
-router.route('/activerents').get(verifyJwt,verifyCustomer,getActiveRent)
+router.route('/activerents').get(getActiveRent); /////////
 router.route('/allrents').get(getAllRentsOfShop); ///////////
 router.route('/allbills').get(getAllBillsOfShop); ///////////
 router.route('/totalrevenue').get(getTotalStoreRevenue); /////////
 router.route('/monthlyrevenue').get(getMonthlyRevenue); /////////
-router.route('/bills').get(verifyJwt,verifyCustomer,getActiveBillsOfStore)
+router.route('/bills').get(getActiveBillsOfStore); //////////
 router.route('/revenue/daily').get(verifyJwt,verifyCustomer,getRevenueBetweenDates)
 router.route('/add/feedback').post(verifyJwt, verifyCustomer, addFeedback);
 

@@ -33,10 +33,16 @@ const RevenueCard = ({ title, value, growthText, chartData }) => {
         </Typography>
         <Typography
           variant="body2"
-          sx={{ color: '#60a5fa', fontSize: '0.75rem', mb: 1 }}
+          sx={{
+            color: '#60a5fa',
+            fontSize: '0.75rem',
+            mt: 2, // Added margin-top for separation
+            mb: 1,
+          }}
         >
           {growthText}
         </Typography>
+
       </CardContent>
 
       <Box sx={{ height: 80 }}>

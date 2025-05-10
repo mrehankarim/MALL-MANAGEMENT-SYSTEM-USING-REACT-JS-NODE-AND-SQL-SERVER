@@ -137,7 +137,7 @@ const StoreBills = () => {
                                             borderRadius: '999px',
                                             fontSize: '0.75rem',
                                             fontWeight: 600,
-                                            backgroundColor: bill.status === 'paid' ? '#00fa25' : '#EF4444',
+                                            backgroundColor: bill.status === 'paid' ? '#00fa25' : '#FF0000',
                                             color: '#0f172a',
                                         }}
                                     >

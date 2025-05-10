@@ -24,11 +24,10 @@ const Rent={
         {
             try {
                 const pool=await poolPromise
-
-            const result=await pool.request().
-            input('shop_no',sql.Int,shop_no)
-            .execute('getActiveRents')
-            return result.recordset
+                const result=await pool.request().
+                input('shop_no',sql.Int,shop_no)
+                .execute('getActiveRents')
+                return result.recordset
                 
             } catch (error) {
                 console.log("error in fecthing active bills",error)

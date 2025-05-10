@@ -1,5 +1,4 @@
 import React,{useEffect} from 'react'
-import AdminLayout from '../../componenets/AdminLayout'
 import CustomerLayout from '../../componenets/CustomerLayout'
 import StoreRent from '../../componenets/StoreRent'
 import { useSelector,useDispatch } from 'react-redux'

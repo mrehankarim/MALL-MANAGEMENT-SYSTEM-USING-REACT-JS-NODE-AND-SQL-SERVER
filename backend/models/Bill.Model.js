@@ -39,17 +39,14 @@ const Bill={
         {
             try {
                 const pool=await poolPromise
-            const result=await pool.request()
-            .input('shop_no',sql.Int,shop_no)
-            .execute('getActiveBillsByShop')
-            return result.recordset
-                
+                const result=await pool.request()
+                .input('shop_no',sql.Int,shop_no)
+                .execute('getActiveBills')
+                return result.recordset   
             } catch (error) {
-                console.log("Error in fecthing bills")
+                console.log("Error in fecthing pending bills")
             }
-            
         }
-
 }
 
 export default Bill

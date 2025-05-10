@@ -27,33 +27,42 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const getActiveBillsOfStore=asyncHandler(async(req,res)=>{
     //get active bills of a store
-  
-    const shop_no=req.query.shop_no
+    
+    // const shop_no=req.query.shop_no
+    const shop_no=101 // for now, it is hardcoded
     if(!shop_no)
     {
       throw new apiError(400,"Shop no is required")
     }
     const bills=await Bill.getActiveBills(shop_no)
+
     if(!bills)
     {
-      throw new apiError(5000,"Something went wrong")
+      throw new apiError(500,"Something went wrong")
     }
-    res.status(500).json(
-      new apiResponse(200,bills,"Bill fetched successfully")
+    res.status(200).json(
+      new apiResponse(200,bills,"pending Bill amount fetched successfully")
     )
   })
+
   const getActiveRent=asyncHandler(async (req,res)=>{
     //this function shop no of store from front end and fetches all it's active bills 
-    const shop_no=req.query.shop_no
+
+    // const shop_no=req.query.shop_no
+    const shop_no=101 //for now, it is hardcoded
+
     if(!shop_no)
     {
       throw new apiError(400,"shop no is required")
     }
+
     const rents=await Rent.getActiveRentsByshop(shop_no)
+
     if(!rents)
     {
       throw new apiError(500,"Something went wrong")
     }
+    
     res.status(200).json(
       new apiResponse(200,rents,'Rents fetched successfully')
     )
