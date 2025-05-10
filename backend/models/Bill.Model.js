@@ -25,8 +25,8 @@ const Bill={
             try {
                 const pool=await poolPromise
                 const result=await pool.request()
-                .input('shop_number',sql.Int,shop_no)
-                .execute('getShopBills')
+                .input('shop_no',sql.Int,shop_no)
+                .execute('GetBillsStatusByShop')
                 return result.recordset
                 
             } catch (error) {

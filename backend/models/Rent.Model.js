@@ -1,4 +1,5 @@
 import { sql,poolPromise } from "../config/dbconfig.js";
+import { getAllRentsOfShop } from "../controllers/customer.controller.js";
 
 const Rent={
 
@@ -17,11 +18,8 @@ const Rent={
             console.log('Error in adding rent',error)
             return false
         }
-        
-        
-
-        
     },
+
     async getActiveRentsByshop(shop_no)
         {
             try {
@@ -34,10 +32,22 @@ const Rent={
                 
             } catch (error) {
                 console.log("error in fecthing active bills",error)
-                
             }
-            
         },
+
+        async getAllRentsOfShop(shop_no){
+            try{
+                const pool=await poolPromise
+                const result=await pool.request()
+                .input('shop_no',sql.Int,shop_no)
+                .execute('GetMonthlyRentStatusByShop')
+                return result.recordset
+            }catch(error){
+                console.log('Error in getting all rents of shop')
+                return false
+            }
+        },
+
         async updateRent(shop_no,rent)
         {
             try {
