@@ -4,13 +4,15 @@ import apiResponse from '../utils/apiResponse.js'
 import Shop from "../models/Shop.Model.js"
 import User from "../models/user.model.js"
 import Papa from "papaparse"
-import fs from "fs"
+import fs, { stat } from "fs"
 import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
 import Feedback from "../models/Feedback.Model.js"
+import Attendance from "../models/Attendance.Model.js"
 import Payroll from "../models/Payroll.Model.js"
 import Employee from "../models/Employee.Model.js"
+
 
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -386,6 +388,36 @@ const getExpensesOfMall=asyncHandler(async(req,res)=>{
   )
 })
 
+const getEmployeesAttendance=asyncHandler(async(req, res)=>{
+
+  const username=req.user?.username
+    const {date}=req.body
+
+    if (!date || isNaN(Date.parse(date))) {
+      throw new apiError(400, "Invalid date entered");
+    }
+
+    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    if(date>today){
+      throw new apiError(400, "Future date can not be entered")
+    }
+
+    const attendance=await Attendance.getEmployeeAttendanceBySubadmin(username, date);
+    if(!attendance){
+      throw new apiError(400, "Something went wrong");
+    }
+
+    if(attendance.length===0){
+      throw new apiResponse(200, attendance, "No data found");
+    }
+
+    res.status(200).json(
+      new apiResponse(200, attendance, "Employees attendance fetched successfully")
+    )
+})
+
+  
 const getEmployeePayrollStatus=asyncHandler(async(req, res)=>{
 
     const username=req.user?.username
@@ -419,19 +451,7 @@ const getEmployeePayrollStatus=asyncHandler(async(req, res)=>{
 
 const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
 
-    const username=req.user?.username
-    const {date}=req.body
-
-    if (!date || isNaN(Date.parse(date))) {
-      throw new apiError(400, "Invalid date entered");
-    }
-
-    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
-
-    if(date>today){
-      throw new apiError(400, "Future date can not be entered")
-    }
-
+    
     const checkPayrolls=await Payroll.IsPayrollGenerated(username, date);
     if(checkPayrolls.length>0){
       throw new apiError(400, "Payrolls already generated for this month");
@@ -504,7 +524,111 @@ const addNewEmployee=asyncHandler(async(req, res)=>{
 });
 
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeePayrollStatus, generateMonthlyPayroll, addNewEmployee}
+const attendanceRecords=[];
+
+const updateAttendance=asyncHandler(async(req, res)=>{
+
+  //here i'm assuming that subadmin ko sirf apny hi employees show horhy hongy jin me sy wo select kr skta he... is liye ssn validate krny ki zrurt ni
+
+  const {ssn, status, date}=req.body;
+
+  if([ssn, status, date].some((field)=>{
+    field==undefined || field.trim()==""
+  }))
+  {
+    throw new apiError(400,"All fields are required")
+  }
+
+  if(isNaN(ssn)){
+    throw new apiError(400, "invlaid ssn");
+  }
+
+  if (!date || isNaN(Date.parse(date))) {
+    throw new apiError(400, "Invalid date entered");
+  }
+
+  const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+    if(date>today){
+      throw new apiError(400, "Future date can not be entered")
+    }
+
+  if(status!="present" && status!="absent"){
+    throw new apiError(400, "attendance status invalid");
+  }
+
+  const existingIndex = attendanceRecords.findIndex(
+    (record) => record.ssn === ssn && record.date === new Date(date).toISOString().split('T')[0]
+  );
+
+  // issy ye ensure horha he ky agr aik employee ko present krky baad me ussi time dobara absent krdia, to value overwrite ho jaye gi 
+  if (existingIndex !== -1) {
+      
+      attendanceRecords[existingIndex] = {
+          ssn,
+          status: status.toLowerCase(),
+          date: new Date(date).toISOString().split('T')[0],
+      };
+  } else {
+      attendanceRecords.push({
+          ssn,
+          status: status.toLowerCase(),
+          date: new Date(date).toISOString().split('T')[0],
+      });
+  }
+
+  //console.log(attendanceRecords);
+
+  res.status(200).json(
+    new apiResponse(200, "Employee attendance added in array successfully")
+  );
+})
+
+const saveAttendance=asyncHandler(async(req, res)=>{
+
+  if (attendanceRecords.length === 0) {
+    throw new apiError(400, "No attendance records to save");
+  }
+
+  const saving = await Attendance.saveEmployeesAttendance(attendanceRecords);
+
+  if(!saving){
+    throw new apiError(400, "something went wrong");
+  }
+
+  res.status(200).json(
+    new apiResponse(200, saving, "Employee attendance saved successfully")
+  );
+
+});
+
+const generateAttendance=asyncHandler(async(req, res)=>{
+
+  const {date}=req.body
+  const username=req.user?.username
+
+  if (!date || isNaN(Date.parse(date))) {
+    throw new apiError(400, "Invalid date entered");
+  }
+
+  const today = new Date().toISOString().split('T')[0]; 
+
+    if(date>today){
+      throw new apiError(400, "Future date can not be entered")
+    }
+
+    const generate = await Attendance.generateEmployeeAttendance(date, username);
+
+    if(!generate){
+      throw new apiError(400, "something went wrong");
+    }
+
+    res.status(200).json(
+      new apiResponse(200, generate, "Employee attendance generated successfully")
+    );
+});
+
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance,addNewEmployee}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it
