@@ -6,7 +6,7 @@ import LoadingPage from './LoadingPage';
 const ProtectedRoute = ({ children, role }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const user = useSelector((state) => {return state.user.value});
+    const user = useSelector((state) => { return state.user.value });
     const loading = useSelector((state) => state.user.loading);
 
     useEffect(() => {
@@ -17,21 +17,21 @@ const ProtectedRoute = ({ children, role }) => {
 
     useEffect(() => {
         if (!loading) {
-          if (!user) {
-            console.log("User still null after loading finished.");
-            // Avoid redirect loop
-            if (location.pathname !== '/') navigate('/');
-            return;
-          }
-    
-          if (user?.role !== role) {
-            console.log("Role mismatch:", user?.role);
-            if (location.pathname !== '/') navigate('/');
-          }
+            if (!user) {
+                console.log("User still null after loading finished.");
+                // Avoid redirect loop
+                if (location.pathname !== '/') navigate('/');
+                return;
+            }
+
+            if (user?.role !== role) {
+                console.log("Role mismatch:", user?.role);
+                if (location.pathname !== '/') navigate('/');
+            }
         }
-      }, [loading, user, role, navigate, location.pathname]);
-    
-      
+    }, [loading, user, role, navigate, location.pathname]);
+
+
 
     if (loading) return <LoadingPage />;
 

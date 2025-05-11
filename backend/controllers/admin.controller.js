@@ -84,7 +84,6 @@ const downloadSubscribers = asyncHandler(async (req, res) => {
         return Object.values(obj).map((value) => `"${value}"`).join(',');
     });
     const csv = [header, ...row].join('\n');
-    console.log(csv)
     res.setHeader('Content-Disposition', 'attachment; filename=subscribers.csv');
     res.setHeader('Content-Type', 'text/csv');
     res.send(csv);

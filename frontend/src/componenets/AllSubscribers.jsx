@@ -36,6 +36,33 @@ const AllSubscribers = () => {
             console.log("Error fetching revenue");
         }
     }
+    const downloadSubscribers = async () => {
+        try {
+            const response = await axios.get("http://localhost:3000/api/v1/admin/download", {
+                withCredentials: true,
+                responseType: 'blob',
+            });
+
+            const blob = new Blob([response.data], { type: response.headers['content-type'] });
+
+            const downloadUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+
+            const contentDisposition = response.headers['content-disposition'];
+            const filenameMatch = contentDisposition && contentDisposition.match(/filename="(.+)"/);
+            const filename = filenameMatch ? filenameMatch[1] : 'subscribers.csv';
+
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(downloadUrl);
+        } catch (error) {
+            console.error("Download failed:", error);
+            alert("Failed to download subscribers");
+        }
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -79,30 +106,34 @@ const AllSubscribers = () => {
 
     return (
         <>
-            <TextField
-                id="outlined-basic"
-                label="Search"
-                variant="outlined"
-                sx={{
-                    width: '400px',
-                    mb: "10px",
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    ml: 'auto',
-                    '& .MuiInputLabel-root': {
-                        color: 'white',
-                    },
-                    '& .MuiOutlinedInput-root': {
-                        '& fieldset': { borderColor: '#192230' },
-                        '&:hover fieldset': { borderColor: '#192230' },
-                        '&.Mui-focused fieldset': { borderColor: '#192230' },
-                    },
-                }}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder='Search by username'
-            />
-
+            <Box sx={{ display: "flex" }}>
+                <Button onClick={() => { downloadSubscribers() }}>
+                    Download
+                </Button>
+                <TextField
+                    id="outlined-basic"
+                    label="Search"
+                    variant="outlined"
+                    sx={{
+                        width: '400px',
+                        mb: "10px",
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        ml: 'auto',
+                        '& .MuiInputLabel-root': {
+                            color: 'white',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': { borderColor: '#192230' },
+                            '&:hover fieldset': { borderColor: '#192230' },
+                            '&.Mui-focused fieldset': { borderColor: '#192230' },
+                        },
+                    }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder='Search by username'
+                />
+            </Box>
             <TableContainer
                 component={Paper}
                 sx={{
@@ -200,10 +231,10 @@ const AllSubscribers = () => {
                         backgroundColor: "white",
                         padding: 4,
                         borderRadius: '8px',
-                        borderColor:"#3a3845",
+                        borderColor: "#3a3845",
                         boxShadow: 24,
                         width: '400px',
-                        color:"black"
+                        color: "black"
                     }}
                 >
                     <Typography id="modal-title" variant="h6" component="h2">

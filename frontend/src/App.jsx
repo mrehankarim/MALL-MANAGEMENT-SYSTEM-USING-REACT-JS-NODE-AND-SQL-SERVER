@@ -12,6 +12,7 @@ import { store } from './redux/store.js';
 import {Provider } from "react-redux"
 import ProtectedRoute from './componenets/ProtectedRoute.jsx';
 import AllSubscribersPage from './pages/admin/AllSubscribersPage.jsx';
+import FeedbackPage from './pages/admin/FeedbackPage.jsx';
 import {createBrowserRouter,RouterProvider} from "react-router-dom"
 const App=()=>{
    const theme = darkTheme;
@@ -47,6 +48,10 @@ const App=()=>{
     {
       path:"/admin/allsubscribers",
       element:<AllSubscribersPage/>
+    },
+    {
+      path:"/admin/feedbacks",
+      element:<FeedbackPage/>
     }
    ])
   return (

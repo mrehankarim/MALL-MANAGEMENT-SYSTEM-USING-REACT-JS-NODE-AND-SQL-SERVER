@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import {
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+    Paper, Box, TextField, Modal, Button, Typography
+} from '@mui/material';
 import axios from "axios";
-import { useTheme } from '@emotion/react';
-import { Box, TextField, Modal, Button, Typography } from '@mui/material';
 
 const Subscriber = () => {
     const [subscriptions, setSubscriptions] = useState([]);
     const [filteredSubscriptions, setFilteredSubscriptions] = useState([]);
     const [search, setSearch] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [totalRevenue, setTotalRevenue] = useState(0);
     const [selectedUsername, setSelectedUsername] = useState(null);
     const [openModal, setOpenModal] = useState(false);
@@ -21,29 +18,50 @@ const Subscriber = () => {
     const fetchRevenueBySubscriber = async (username) => {
         try {
             const response = await axios.get(`http://localhost:3000/api/v1/admin/revenuebysubsciber?username=${username}`, {
-                headers: {
-                    'Accept': 'application/json',
-                },
+                headers: { 'Accept': 'application/json' },
                 withCredentials: true
             });
             const data = response.data.data;
             if (data.length !== 0) {
                 setTotalRevenue(data[0].totalSales);
                 setSelectedUsername(username);
-                setOpenModal(true); // Open the modal when revenue data is fetched
+                setOpenModal(true);
             }
         } catch (error) {
             console.log("Error fetching revenue");
         }
-    }
+    };
+
+    const deactivate = async (id) => {
+        try {
+            const response = await axios.get(`http://localhost:3000/api/v1/admin/deactivate/${id}`, {
+                withCredentials: true,
+            });
+            if (response.status === 200) {
+                const filtered = subscriptions.filter((s) => s.subscription_id !== id);
+                setSubscriptions(filtered);
+                setFilteredSubscriptions(filtered);
+                alert(`Deactivated subscriber with id: ${id}`);
+            } else {
+                alert("Failed to deactivate subscriber.");
+            }
+        } catch (error) {
+            console.error("Error", error);
+            alert("Failed");
+        }
+    };
+
+    const clearFilters = () => {
+        setSearch("");
+        setStartDate("");
+        setEndDate("");
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('http://localhost:3000/api/v1/admin/activesubscribers', {
-                    headers: {
-                        'Accept': 'application/json',
-                    },
+                    headers: { 'Accept': 'application/json' },
                     withCredentials: true
                 });
                 setSubscriptions(response.data.data);
@@ -57,51 +75,82 @@ const Subscriber = () => {
 
     useEffect(() => {
         const timeout = setTimeout(() => {
-            if (search.trim() === "") {
-                setFilteredSubscriptions(subscriptions);
-            } else {
-                const filtered = subscriptions.filter((sub) =>
+            let filtered = subscriptions;
+
+            if (search.trim() !== "") {
+                filtered = filtered.filter(sub =>
                     sub.mallowner_username.toLowerCase().includes(search.toLowerCase())
                 );
-                setFilteredSubscriptions(filtered);
             }
+
+            if (startDate) {
+                filtered = filtered.filter(sub =>
+                    new Date(sub.start_date) >= new Date(startDate)
+                );
+            }
+
+            if (endDate) {
+                filtered = filtered.filter(sub =>
+                    new Date(sub.end_date) <= new Date(endDate)
+                );
+            }
+
+            setFilteredSubscriptions(filtered);
         }, 300);
 
         return () => clearTimeout(timeout);
-    }, [search, subscriptions]);
+    }, [search, startDate, endDate, subscriptions]);
 
     const handleCloseModal = () => {
         setOpenModal(false);
-        setTotalRevenue(0); // Reset revenue when closing the modal
+        setTotalRevenue(0);
     };
-
-    const theme = useTheme();
 
     return (
         <>
-            <TextField
-                id="outlined-basic"
-                label="Search"
-                variant="outlined"
-                sx={{
-                    width: '400px',
-                    mb: "10px",
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    ml: 'auto',
-                    '& .MuiInputLabel-root': {
-                        color: 'white',
-                    },
-                    '& .MuiOutlinedInput-root': {
-                        '& fieldset': { borderColor: '#192230' },
-                        '&:hover fieldset': { borderColor: '#192230' },
-                        '&.Mui-focused fieldset': { borderColor: '#192230' },
-                    },
-                }}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder='Search by username'
-            />
+            <Box display="flex" justifyContent="flex-end" gap={2} mb={1}>
+                <TextField
+                    label="Start Date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    sx={{ input: { color: 'white' }, label: { color: 'white' }, width: 180 }}
+                />
+                <TextField
+                    label="End Date"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    sx={{ input: { color: 'white' }, label: { color: 'white' }, width: 180 }}
+                />
+                <TextField
+                    label="Search"
+                    variant="outlined"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder='Search by username'
+                    sx={{
+                        width: '300px',
+                        '& .MuiInputLabel-root': { color: 'white' },
+                        '& .MuiOutlinedInput-root': {
+                            '& fieldset': { borderColor: '#192230' },
+                            '&:hover fieldset': { borderColor: '#192230' },
+                            '&.Mui-focused fieldset': { borderColor: '#192230' },
+                        },
+                        input: { color: 'white' }
+                    }}
+                />
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={clearFilters}
+                    sx={{ height: "100%", alignSelf: "center" }}
+                >
+                    Clear Filters
+                </Button>
+            </Box>
 
             <TableContainer
                 component={Paper}
@@ -123,7 +172,7 @@ const Subscriber = () => {
                             <TableCell align="right" sx={{ color: "#94a3b8" }}>End Date</TableCell>
                             <TableCell align="right" sx={{ color: "#94a3b8" }}>Subscription Fee</TableCell>
                             <TableCell align="right" sx={{ color: "#94a3b8" }}>Status</TableCell>
-                            <TableCell align="right" sx={{ color: "#94a3b8" }}>Revenue</TableCell>
+                            <TableCell align="center" sx={{ color: "#94a3b8" }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -178,6 +227,27 @@ const Subscriber = () => {
                                     >
                                         Revenue
                                     </Box>
+
+                                    <Box
+                                        component="button"
+                                        sx={{
+                                            backgroundColor: "#da1d1d",
+                                            color: "white",
+                                            fontSize: "0.75rem",
+                                            fontWeight: 600,
+                                            px: 2,
+                                            py: 0.5,
+                                            borderRadius: "999px",
+                                            border: "none",
+                                            cursor: "pointer",
+                                            '&:hover': {
+                                                backgroundColor: "#000000",
+                                            },
+                                        }}
+                                        onClick={() => deactivate(subscription.subscription_id)}
+                                    >
+                                        deactivate
+                                    </Box>
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -200,10 +270,10 @@ const Subscriber = () => {
                         backgroundColor: "white",
                         padding: 4,
                         borderRadius: '8px',
-                        borderColor:"#3a3845",
+                        borderColor: "#3a3845",
                         boxShadow: 24,
                         width: '400px',
-                        color:"black"
+                        color: "black"
                     }}
                 >
                     <Typography id="modal-title" variant="h6" component="h2">
