@@ -54,7 +54,6 @@ const AdminPanel = () => {
     return formatted.reverse();
   };
   const formattedReveue=formatMonthlyRevenue(rawRevenue)
-  console.log(formattedReveue)
   return (
     <>
     <Box sx={{ display: 'flex', gap: 3 }}>
