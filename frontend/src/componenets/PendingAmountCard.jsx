@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, Typography, Button } from '@mui/material';
-import RentPaymentForm from './RentPaymentForm'
+import RentPaymentForm from './RentPaymentForm';
+import BillPaymentForm from './BillPaymentForm'; 
 
 const PendingAmountCard = ({ title, value, shopNo }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -15,7 +16,7 @@ const PendingAmountCard = ({ title, value, shopNo }) => {
           width: '80%',
           maxWidth: 210,
           height: 200,
-          marginLeft:5,
+          marginLeft: 5,
           p: 2,
           boxShadow: '0 0 0 1px #1e293b',
         }}
@@ -29,7 +30,7 @@ const PendingAmountCard = ({ title, value, shopNo }) => {
           </Typography>
           <Typography variant="h5" sx={{ fontWeight: 'normal', fontSize: '1.8rem', mb: 0.5 }}>
             {value > 0 ? `$${value}` : 'Nothing is pending'}
-            </Typography>
+          </Typography>
           {value > 0 && (
             <Button
               variant="contained"
@@ -47,13 +48,26 @@ const PendingAmountCard = ({ title, value, shopNo }) => {
         </CardContent>
       </Card>
 
-      {/* Payment Form Modal */}
-      <RentPaymentForm
-        open={openModal}
-        onClose={() => setOpenModal(false)} // Close the modal
-        title={title}
-        shopNo={shopNo} // Pass shop number if needed
-      />
+      {/* Conditionally Render Payment Form Modal */}
+      {openModal && (
+        <>
+          {title === 'Pending Utility Bills' ? (
+            <BillPaymentForm
+              open={openModal}
+              onClose={() => setOpenModal(false)} // Close the modal
+              title={title}
+              shopNo={shopNo} // Pass shop number if needed
+            />
+          ) : (
+            <RentPaymentForm
+              open={openModal}
+              onClose={() => setOpenModal(false)} // Close the modal
+              title={title}
+              shopNo={shopNo} // Pass shop number if needed
+            />
+          )}
+        </>
+      )}
     </>
   );
 };

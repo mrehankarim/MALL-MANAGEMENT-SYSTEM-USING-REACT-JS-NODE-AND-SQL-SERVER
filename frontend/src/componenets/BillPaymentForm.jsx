@@ -20,30 +20,30 @@ const RentPaymentForm = ({ open, onClose, title }) => {
 
   const [formData, setFormData] = useState({
     method: '',
-    rent: null, // Updated from "bill" to "rent"
+    bill: null, 
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [pendingRents, setPendingRents] = useState([]); // Updated from "pendingBills" to "pendingRents"
+  const [pendingBills, setPendingBills] = useState([]);
 
   useEffect(() => {
-    const fetchPendingRents = async () => {
+    const fetchPendingBills = async () => {
       try {
         const { data } = await axios.get(
-          'http://localhost:3000/api/v1/customer/allpendingrents',
+          'http://localhost:3000/api/v1/customer/allpendingbills',
           { withCredentials: true }
         );
-        setPendingRents(data.data || []); // Ensure the data is set correctly
+        setPendingBills(data.data || []);
       } catch (err) {
-        console.error('Failed to fetch pending rents', err);
-        setPendingRents([]);
+        console.error('Failed to fetch pending bills', err);
+        setPendingBills([]);
       }
     };
 
     if (open) {
-      fetchPendingRents();
-      setFormData({ method: '', rent: null }); // Reset form data when modal opens
+      fetchPendingBills();
+      setFormData({ method: '', bill: null }); 
       setError(null);
     }
   }, [open]);
@@ -53,10 +53,10 @@ const RentPaymentForm = ({ open, onClose, title }) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRentSelect = (e) => {
+  const handleBillSelect = (e) => {
     const selectedId = e.target.value;
-    const selectedRent = pendingRents.find((r) => r.payment_id === selectedId);
-    setFormData((prev) => ({ ...prev, rent: selectedRent }));
+    const selectedBill = pendingBills.find((b) => b.bill_id === selectedId);
+    setFormData((prev) => ({ ...prev, bill: selectedBill }));
   };
 
   const handleSubmit = async (e) => {
@@ -65,22 +65,23 @@ const RentPaymentForm = ({ open, onClose, title }) => {
     setError(null);
 
     try {
-      if (!formData.rent || !formData.method) {
-        setError('Please select rent and payment method.');
+      if (!formData.bill || !formData.method) {
+        setError('Please select a bill and payment method.');
         setLoading(false);
         return;
       }
 
-      const { month_year } = formData.rent;
+      const { amount, type, month_year } = formData.bill;
 
       const payload = {
-        method: String(formData.method), // Payment method
-        type: 'rent', // Fixed type as "rent"
-        month_year: new Date(month_year).toISOString().split('T')[0], // Format date as YYYY-MM-DD
+        amount: parseFloat(amount).toFixed(2), 
+        type: 'bill', 
+        method: String(formData.method), 
+        month_year: new Date(month_year).toISOString().split('T')[0],
       };
 
       await axios.post(
-        'http://localhost:3000/api/v1/customer/payrent',
+        'http://localhost:3000/api/v1/customer/paybill',
         payload,
         {
           headers: { Accept: 'application/json' },
@@ -158,14 +159,14 @@ const RentPaymentForm = ({ open, onClose, title }) => {
             </Typography>
           )}
 
-          {/* Select Rent */}
+          {/* 🔄 Select Bill - updated to track full bill object */}
           <FormControl fullWidth required>
-            <InputLabel id="rent-select-label">Select Rent</InputLabel>
+            <InputLabel id="bill-select-label">Select Bill</InputLabel>
             <Select
-              labelId="rent-select-label"
-              value={formData.rent?.payment_id || ''}
-              onChange={handleRentSelect}
-              label="Select Rent"
+              labelId="bill-select-label"
+              value={formData.bill?.bill_id || ''}
+              onChange={handleBillSelect}
+              label="Select Bill"
               MenuProps={{
                 disablePortal: true,
                 anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
@@ -180,14 +181,15 @@ const RentPaymentForm = ({ open, onClose, title }) => {
                 },
               }}
             >
-              {pendingRents.length === 0 ? (
+              {pendingBills.length === 0 ? (
                 <MenuItem value="" disabled>
-                  No pending rents
+                  No pending bills
                 </MenuItem>
               ) : (
-                pendingRents.map((rent) => (
-                  <MenuItem key={rent.payment_id} value={rent.payment_id}>
-                    Payment #{rent.payment_id} | {new Date(rent.month_year).toLocaleDateString()} | {rent.status}
+                pendingBills.map((bill) => (
+                  <MenuItem key={bill.bill_id} value={bill.bill_id}>
+                    #{bill.bill_id} | {bill.type} | Rs. {bill.amount} |{' '}
+                    {new Date(bill.month_year).toLocaleDateString()}
                   </MenuItem>
                 ))
               )}
@@ -223,6 +225,31 @@ const RentPaymentForm = ({ open, onClose, title }) => {
               <MenuItem value="UPI">UPI</MenuItem>
             </Select>
           </FormControl>
+
+          {/* Extra instructions per method */}
+          {formData.method === 'cash' && (
+            <Typography variant="body2" color="text.secondary">
+              Pay directly at the counter. Receipt will be issued manually.
+            </Typography>
+          )}
+          {formData.method === 'credit_card' && (
+            <Typography variant="body2" color="text.secondary">
+              Use your card at POS terminal: Machine ID 45321X
+            </Typography>
+          )}
+          {formData.method === 'bank_transfer' && (
+            <Typography variant="body2" color="text.secondary">
+              Bank Name: XYZ Bank<br />
+              A/C Number: 1234567890<br />
+              IFSC Code: XYZB0001234
+            </Typography>
+          )}
+          {formData.method === 'UPI' && (
+            <Typography variant="body2" color="text.secondary">
+              Send to UPI ID: rentpay@xyz<br />
+              Use transaction ID as reference.
+            </Typography>
+          )}
 
           <Button
             variant="outlined"

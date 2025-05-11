@@ -108,7 +108,7 @@ const InsertRevenueForm = ({ open, onClose, title, storeId }) => {
           </IconButton>
 
           <Typography variant="h4" fontWeight="bold" textAlign="center" mb={2}>
-            Insert Today's Revenue
+            Insert Revenue
           </Typography>
 
           {error && (

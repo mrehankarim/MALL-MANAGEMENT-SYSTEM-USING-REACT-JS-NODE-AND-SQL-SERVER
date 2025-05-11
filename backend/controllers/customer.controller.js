@@ -248,17 +248,22 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 })
 
   const payBill=asyncHandler(async(req,res)=>{
-    const {bill_id, transaction_id}=req.body
+    const {amount, method, type, month_year}=req.body
 
-    if([bill_id, transaction_id].some((field)=>{
+    // const shop_no=req.query.shop_no
+    // const username=req.user?.username
+    const shop_no=101
+    const username='subscriber1'
+
+    if([method, type, month_year].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
       throw new apiError(400,"All fields are required")
     }
 
-    const paybill=await Bill.payPendingBill(bill_id, transaction_id);
-    if(!payBill){
+    const paybill=await Bill.payPendingBill(amount, method, type, username, shop_no, month_year);
+    if(!paybill){
       throw new apiError(500,"Something went wrong")
     }
 
@@ -269,22 +274,29 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const payRent=asyncHandler(async(req,res)=>{
     //store owner will pay rent
-    const {payment_id, transaction_id}=req.body
+    const {method, type, month_year}=req.body
 
-    if([payment_id, transaction_id].some((field)=>{
+    // const shop_no=req.query.shop_no
+    // const username=req.user?.username
+    const shop_no=101
+    const username='subscriber1'
+
+    if([method, type, month_year].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
       throw new apiError(400,"All fields are required")
     }
 
-    const payRent=await Rent.payMonthlyRent(payment_id, transaction_id);
-    if(!payRent){
+    const result= await Rent.getMonthlyRentOfStore(shop_no) // ye shop_no ka rent utha kr lata he
+    const amount = result[0]?.rent_amount;
+    const payrent=await Rent.payMonthlyRent(amount, method, type, username, shop_no, month_year);
+    if(!payrent){
       throw new apiError(500,"Something went wrong")
     }
 
     res.status(200).json(
-      new apiResponse(200,payRent,'Rent paid successfully')
+      new apiResponse(200,payrent,'Rent paid successfully')
     )
   })
 

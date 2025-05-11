@@ -50,7 +50,6 @@ const StoreBills = () => {
 
     const theme = useTheme();
 
-    // Helper function to format date
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');

@@ -61,16 +61,21 @@ const Bill={
             }
         },
 
-        async payPendingBill(bill_id, transaction_id){
+        async payPendingBill(amount, method, type, username, shop_no, month_year){
             try {
                 const pool=await poolPromise
                 const result=await pool.request()
-                .input('bill_id',sql.Int,bill_id)
-                .input('transaction_id',sql.Int,transaction_id)
+                .input('amount',sql.Decimal(10, 2),amount)
+                .input('method',sql.VarChar,method)
+                .input('type',sql.VarChar,type)
+                .input('username',sql.VarChar,username)
+                .input('shop_no',sql.Int,shop_no)
+                .input('month_year',sql.Date,month_year)
                 .execute('payPendingBill')
-                return result.recordset   
+                return true  
             } catch (error) {
-                console.log("Error in paying pending bill")
+                console.log("Error in paying pending bill", error)
+                return false
             }
         }
 }
