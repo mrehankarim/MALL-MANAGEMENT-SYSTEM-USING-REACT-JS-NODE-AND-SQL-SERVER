@@ -96,7 +96,6 @@ const registerUser=asyncHandler(async (req,res)=>{
 
 const loginUser=asyncHandler(async(req,res)=>{
     const {email,password}=req.body //email can contain both email or username
-    console.log(email,password)
     let userRecord=await User.getUserByEmail(email)
     if(userRecord.length==0)
     {

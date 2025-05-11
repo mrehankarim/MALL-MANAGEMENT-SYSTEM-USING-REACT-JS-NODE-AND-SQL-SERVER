@@ -44,7 +44,7 @@ const Login = ({ setLogin }) => {
         }
       );
       setLogin(prev => !prev);
-      navigate('/admin');
+      navigate('/admin/dashboard');
     } catch (error) {
       setError('Login failed. Please check your credentials and try again.');
       console.error(error);

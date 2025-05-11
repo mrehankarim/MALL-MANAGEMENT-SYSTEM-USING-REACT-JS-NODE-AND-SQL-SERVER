@@ -39,10 +39,11 @@ const Subscription={
             return null;
         }
     },
-    async getTotalRevenueBySubscriber() {
+    async getTotalRevenueBySubscriber(username) {
         try {
             const pool = await poolPromise;
             const result = await pool.request()
+            .input("username",sql.VarChar,username)
                 .execute('GET_TOTAL_REVENUE_BY_SUBSCRIBER');
                 return result.recordset
         } catch (error) {

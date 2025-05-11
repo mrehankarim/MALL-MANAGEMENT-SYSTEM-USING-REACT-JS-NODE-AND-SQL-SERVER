@@ -44,7 +44,8 @@ const getTotalRevenue = asyncHandler(async (req, res) => {
 })
 
 const getTotalRevenueBySubscriber = asyncHandler(async (req, res) => {
-    const revenues = await Subscription.getTotalRevenueBySubscriber()
+    const username=req.query.username
+    const revenues = await Subscription.getTotalRevenueBySubscriber(username)
     if (!revenues) {
         throw new apiError(500, "Something went wrong")
     }

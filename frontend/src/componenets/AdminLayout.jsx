@@ -19,6 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CardMembershipOutlinedIcon from '@mui/icons-material/CardMembershipOutlined';
 import ContentPasteOffOutlinedIcon from '@mui/icons-material/ContentPasteOffOutlined';
+import { NavLink } from 'react-router-dom';
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -155,7 +156,12 @@ export default function AdminLayout({username,children}) {
         </DrawerHeader>
         <Divider />
         <List sx={{display:"flex",flexDirection:"column",gap:"8px"}}>
-          
+          <NavLink to={"/admin/dashboard"} style={({ isActive }) => ({
+                textDecoration: 'none',
+                backgroundColor: isActive ? '#3B82F6' : 'transparent', 
+                color: isActive ? '#fff' : 'inherit', 
+            })}
+>
             <ListItem disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={[
@@ -203,8 +209,14 @@ export default function AdminLayout({username,children}) {
                 />
               </ListItemButton>
             </ListItem>
+            </NavLink>
         <Divider />
-
+        <NavLink to={"/admin/subscribers"} style={({ isActive }) => ({
+                textDecoration: 'none',
+                backgroundColor: isActive ? '#3B82F6' : 'transparent', 
+                color: isActive ? '#fff' : 'inherit', 
+            })}
+>
             <ListItem  disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={[
@@ -252,8 +264,14 @@ export default function AdminLayout({username,children}) {
                 />
               </ListItemButton>
             </ListItem>
+            </NavLink>
             <Divider />
-
+            <NavLink to={"/admin/allsubscribers"} style={({ isActive }) => ({
+                textDecoration: 'none',
+                backgroundColor: isActive ? '#3B82F6' : 'transparent', 
+                color: isActive ? '#fff' : 'inherit', 
+            })}
+>
             <ListItem  disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={[
@@ -301,6 +319,7 @@ export default function AdminLayout({username,children}) {
                 />
               </ListItemButton>
             </ListItem>
+            </NavLink>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
