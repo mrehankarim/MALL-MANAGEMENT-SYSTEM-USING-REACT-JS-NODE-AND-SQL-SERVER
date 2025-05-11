@@ -139,7 +139,7 @@ const loginUser=asyncHandler(async(req,res)=>{
 const logOutUser=asyncHandler(async(req,res)=>{
     //clear accesTpken
     //clear refreshToken
-    
+    console.log("hit")
     const user=req.user
     if(!user)
     {
