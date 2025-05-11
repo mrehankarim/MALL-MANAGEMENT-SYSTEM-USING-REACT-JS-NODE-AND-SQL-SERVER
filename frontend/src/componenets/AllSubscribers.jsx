@@ -10,7 +10,7 @@ import axios from "axios";
 import { useTheme } from '@emotion/react';
 import { Box, TextField, Modal, Button, Typography } from '@mui/material';
 
-const Subscriber = () => {
+const AllSubscribers = () => {
     const [subscriptions, setSubscriptions] = useState([]);
     const [filteredSubscriptions, setFilteredSubscriptions] = useState([]);
     const [search, setSearch] = useState("");
@@ -40,7 +40,7 @@ const Subscriber = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/v1/admin/activesubscribers', {
+                const response = await axios.get('http://localhost:3000/api/v1/admin/subscribers', {
                     headers: {
                         'Accept': 'application/json',
                     },
@@ -226,4 +226,4 @@ const Subscriber = () => {
     );
 };
 
-export default Subscriber;
+export default AllSubscribers;

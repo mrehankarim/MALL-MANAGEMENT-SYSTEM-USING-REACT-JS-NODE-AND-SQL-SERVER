@@ -1,4 +1,5 @@
 import { sql, poolPromise } from "../config/dbconfig.js"
+import { getPendingRentsofShop } from "../controllers/customer.controller.js"
 
 const Bill={
     async InsertBill(shop_no,type,amount,month_year)
@@ -44,7 +45,32 @@ const Bill={
                 .execute('getActiveBills')
                 return result.recordset   
             } catch (error) {
-                console.log("Error in fecthing pending bills")
+                console.log("Error in fecthing sum of pending bills")
+            }
+        },
+
+        async getPendingBillsofShop(shop_no){
+             try {
+                const pool=await poolPromise
+                const result=await pool.request()
+                .input('shop_no',sql.Int,shop_no)
+                .execute('getAllPendingBillsOfStore')
+                return result.recordset   
+            } catch (error) {
+                console.log("Error in fecthing list of pending bills")
+            }
+        },
+
+        async payPendingBill(bill_id, transaction_id){
+            try {
+                const pool=await poolPromise
+                const result=await pool.request()
+                .input('bill_id',sql.Int,bill_id)
+                .input('transaction_id',sql.Int,transaction_id)
+                .execute('payPendingBill')
+                return result.recordset   
+            } catch (error) {
+                console.log("Error in paying pending bill")
             }
         }
 }

@@ -9,7 +9,6 @@ const Dashboard = () => {
       const loading = useSelector((state) => state.user.loading);
       useEffect(() => {
           dispatch(fetchUser());
-          console.log(user)
         }, [dispatch]);  
   return (
     <>

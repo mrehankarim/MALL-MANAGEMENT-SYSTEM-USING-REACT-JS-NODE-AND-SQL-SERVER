@@ -6,20 +6,35 @@ import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
 import DailyStoreRevenue from "../models/DAILY_STORE_REVENUE.MODEL.js"
 import Feedback from "../models/Feedback.Model.js"
+import { toASCII } from "punycode"
 const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     //user would be loggedIn while inserting daily revenue
     //dont take store_id from user in form just do it programmtically on front end
-    const {store_id,total_earnings,date}=req.body
-    if([store_id,total_earnings,date].some((field)=>{
+    const store_id=req.query.store_id
+    const {total_earnings,date}=req.body
+
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+    
+    if([store_id,total_earnings,formattedDate].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
       throw new apiError(400,"All fields are required")
     }
-    if(!await Store.insertDailyRevenue(store_id,total_earnings,date))
+
+    if(isNaN(total_earnings)){
+            throw new apiError(400,"invalid amount entered")
+    }
+
+    if(total_earnings<1){
+      throw new apiError(400,"total earnings amount should be greater than 0")
+    }
+
+    if(!await Store.insertDailyRevenue(store_id,total_earnings,formattedDate))
     {
       throw new apiError(500,"Something went wrong while inserting sales")
     }
+
     res.status(200).json(
       new apiResponse(200,{},"Revenue inserted successfully")
     )
@@ -85,6 +100,46 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
     res.status(200).json(
       new apiResponse(200,allRents,'All Rents of Shop fetched successfully')
+    )
+  })
+
+  const getPendingRentsofShop=asyncHandler(async(req, res)=>{
+
+    // const shop_no=req.query.shop_no
+    const shop_no=101
+    if(!shop_no)
+    {
+      throw new apiError(400,"shop no is required")
+    }
+
+    const pendingRents=await Rent.getPendingRentsOfShop(shop_no);
+
+    if(!pendingRents){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,pendingRents,'All pending rents of Shop fetched successfully')
+    )
+  })
+
+  const getPendingBillsofShop=asyncHandler(async(req, res)=>{
+
+    // const shop_no=req.query.shop_no
+    const shop_no=101
+    if(!shop_no)
+    {
+      throw new apiError(400,"shop no is required")
+    }
+
+    const pendingBills=await Bill.getPendingBillsofShop(shop_no);
+
+    if(!pendingBills){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,pendingBills,'All pending rents of Shop fetched successfully')
     )
   })
 
@@ -168,10 +223,10 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
   })
   const addFeedback=asyncHandler(async(req, res)=>{
 
-    const {message, rating}=req.body
     const username=req.user?.username
+    const {message, rating}=req.body
 
-    if([message, rating].some((field)=>{
+    if([message].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
@@ -193,10 +248,47 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 })
 
   const payBill=asyncHandler(async(req,res)=>{
-    //store owner will pay bill
+    const {bill_id, transaction_id}=req.body
+
+    if([bill_id, transaction_id].some((field)=>{
+      field==undefined || field.trim()==""
+    }))
+    {
+      throw new apiError(400,"All fields are required")
+    }
+
+    const paybill=await Bill.payPendingBill(bill_id, transaction_id);
+    if(!payBill){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,paybill,'Bill paid successfully')
+    )
   })
 
-  export {getRevenueBetweenDates,insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue}
+  const payRent=asyncHandler(async(req,res)=>{
+    //store owner will pay rent
+    const {payment_id, transaction_id}=req.body
+
+    if([payment_id, transaction_id].some((field)=>{
+      field==undefined || field.trim()==""
+    }))
+    {
+      throw new apiError(400,"All fields are required")
+    }
+
+    const payRent=await Rent.payMonthlyRent(payment_id, transaction_id);
+    if(!payRent){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,payRent,'Rent paid successfully')
+    )
+  })
+
+  export {getRevenueBetweenDates,insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue, payBill, payRent, getPendingRentsofShop, getPendingBillsofShop}
 
   //customer can get active rents
   //can get total revenue of till date of month

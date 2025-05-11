@@ -1,23 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Container, Typography, TextField, Button, IconButton, CircularProgress, useTheme } from '@mui/material';
+import React, { useState } from 'react';
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Button,
+  IconButton,
+  CircularProgress,
+  useTheme
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 
-const RentPaymentForm = ({ open, onClose, title, shopNo }) => {
+const InsertRevenueForm = ({ open, onClose, title, storeId }) => {
   const theme = useTheme();
   const [formData, setFormData] = useState({
-    payment_id: '', // Manually entered payment_id
-    transaction_id: '', // Manually entered transaction_id
+    total_earnings: '',
+    date: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value, // Update the form data
-    });
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -26,17 +35,22 @@ const RentPaymentForm = ({ open, onClose, title, shopNo }) => {
     setError(null);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/customer/payrent', formData, {
-        headers: {
-          Accept: 'application/json',
-        },
-      });
+        console.log(formData);
+      const response = await axios.post(
+        `http://localhost:3000/api/v1/customer/insertrevenue?store_id=${1}`,
+        formData,
+        {
+          headers: {
+            Accept: 'application/json',
+          },
+        }
+      );
 
       console.log(response);
-      alert(`${title} payment successful!`);
-      onClose(); // Close the modal after successful submission
+      alert(`${title} inserted successfully!`);
+      onClose();
     } catch (error) {
-      setError('Payment failed. Please try again.');
+      setError('Insertion failed. Please try again.');
       console.error(error);
     } finally {
       setLoading(false);
@@ -88,17 +102,13 @@ const RentPaymentForm = ({ open, onClose, title, shopNo }) => {
         >
           <IconButton
             onClick={onClose}
-            sx={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-            }}
+            sx={{ position: 'absolute', top: 8, right: 8 }}
           >
             <CloseIcon />
           </IconButton>
 
           <Typography variant="h4" fontWeight="bold" textAlign="center" mb={2}>
-            {title} Payment
+            Insert Today's Revenue
           </Typography>
 
           {error && (
@@ -107,15 +117,25 @@ const RentPaymentForm = ({ open, onClose, title, shopNo }) => {
             </Typography>
           )}
 
-          {/* Input for payment_id */}
           <TextField
-            name="payment_id"
-            label="Payment ID"
-            value={formData.payment_id}
+            name="total_earnings"
+            label="Total Earnings"
+            type="number"
+            value={formData.total_earnings}
             onChange={handleChange}
             fullWidth
             required
+            inputProps={{
+              step: '0.01',
+            }}
             sx={{
+              '& input[type=number]::-webkit-outer-spin-button, & input[type=number]::-webkit-inner-spin-button': {
+                WebkitAppearance: 'none',
+                margin: 0,
+              },
+              '& input[type=number]': {
+                MozAppearance: 'textfield',
+              },
               '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: '#192230' },
                 '&:hover fieldset': { borderColor: '#192230' },
@@ -124,21 +144,25 @@ const RentPaymentForm = ({ open, onClose, title, shopNo }) => {
             }}
           />
 
-          {/* Input for transaction_id */}
           <TextField
-            name="transaction_id"
-            label="Transaction ID"
-            value={formData.transaction_id}
+            name="date"
+            label="Date"
+            type="date"
+            value={formData.date}
             onChange={handleChange}
             fullWidth
             required
+            InputLabelProps={{ shrink: true }}
             sx={{
-              '& .MuiOutlinedInput-root': {
+            '& .MuiOutlinedInput-root': {
                 '& fieldset': { borderColor: '#192230' },
                 '&:hover fieldset': { borderColor: '#192230' },
                 '&.Mui-focused fieldset': { borderColor: '#192230' },
-              },
-            }}
+                '& input[type="date"]::-webkit-calendar-picker-indicator': {
+                filter: 'invert(1)', // this makes the calendar icon white
+                },
+            },
+}}
           />
 
           <Button
@@ -152,7 +176,7 @@ const RentPaymentForm = ({ open, onClose, title, shopNo }) => {
               '&:hover': { backgroundColor: '#3b82f6', color: '#fff' },
             }}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : 'Pay Now'}
+            {loading ? <CircularProgress size={24} color="inherit" /> : 'Insert'}
           </Button>
         </Box>
       </Container>
@@ -160,4 +184,4 @@ const RentPaymentForm = ({ open, onClose, title, shopNo }) => {
   );
 };
 
-export default RentPaymentForm;
+export default InsertRevenueForm;

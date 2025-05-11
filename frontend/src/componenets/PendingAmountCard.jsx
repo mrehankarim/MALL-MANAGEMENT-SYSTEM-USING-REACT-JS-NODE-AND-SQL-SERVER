@@ -12,8 +12,10 @@ const PendingAmountCard = ({ title, value, shopNo }) => {
           borderRadius: '20px',
           backgroundColor: '#020317', // Very dark blue
           color: '#f1f5f9',
-          width: '100%',
-          maxWidth: 320,
+          width: '80%',
+          maxWidth: 210,
+          height: 200,
+          marginLeft:5,
           p: 2,
           boxShadow: '0 0 0 1px #1e293b',
         }}

@@ -11,7 +11,6 @@ import {
 
 const MonthlyRevenue = ({ title, chartData }) => {
   const total = chartData.reduce((acc, item) => acc + item.revenue, 0);
-
   return (
     <Card
       sx={{

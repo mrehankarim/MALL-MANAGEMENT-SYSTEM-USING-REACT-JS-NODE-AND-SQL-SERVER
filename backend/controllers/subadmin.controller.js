@@ -11,6 +11,7 @@ import Rent from "../models/Rent.Model.js"
 import Feedback from "../models/Feedback.Model.js"
 import Attendance from "../models/Attendance.Model.js"
 import Payroll from "../models/Payroll.Model.js"
+import Employee from "../models/Employee.Model.js"
 
 
 function validateEmail(email) {
@@ -464,8 +465,64 @@ const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
     res.status(200).json(
       new apiResponse(200, generatedPayrolls, "Monthly Payrolls generated succesfully")
     );
-
 })
+
+const addNewEmployee=asyncHandler(async(req, res)=>{
+
+    // name, email, phone#, role_id, salary, (sudadmin_username)
+    const {ssn, name, email, phone, role_id, salary}=req.body
+    const username = req.user?.username
+
+    if([ssn, name, email, phone, role_id, salary].some((field)=>{
+      field==undefined || field.trim()==""
+    }))
+    {
+      throw new apiError(400,"All fields are required")
+    }
+
+    if(isNaN(ssn)){
+      throw new apiError(400, "invalid ssn");
+    }
+
+    let existing=await Employee.getEmployeeBySSN(ssn);
+    if(existing.length>0){
+      throw new apiError(400,"ssn already exists")   
+    }
+
+    if(!validateEmail(email))
+    {
+        throw new apiError(400,"Invalid email")
+    }
+    
+    let existingEmployee = await Employee.getEmployeeByEmail(email);
+    
+    if(existingEmployee.length>0)
+    {
+        throw new apiError(400,"email already exists")   
+    }
+
+    if(isNaN(phone) || phone.length != 11){
+      throw new apiError(400, "Invalid phone number");
+    }
+
+    if(isNaN(role_id)){
+      throw new apiError(400, "Invalid role id");
+    }
+
+    if(isNaN(salary) || parseFloat(salary) <= 0){
+      throw new apiError(400, "Invalid salary");
+    }
+
+    let newEmployee = await Employee.addEmployee(ssn, name, email, phone, role_id, salary, username);
+    if(!newEmployee){
+      throw new apiError(400, "something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200, newEmployee, "New employee added succesfully")
+    );
+});
+
 
 const attendanceRecords=[];
 
@@ -571,7 +628,7 @@ const generateAttendance=asyncHandler(async(req, res)=>{
     );
 });
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance}
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance,addNewEmployee}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it

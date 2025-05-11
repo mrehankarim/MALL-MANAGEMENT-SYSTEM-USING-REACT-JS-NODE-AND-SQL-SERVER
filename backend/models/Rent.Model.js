@@ -30,7 +30,7 @@ const Rent={
                 return result.recordset
                 
             } catch (error) {
-                console.log("error in fecthing active bills",error)
+                console.log("error in fecthing sum of active rents",error)
             }
         },
 
@@ -47,6 +47,19 @@ const Rent={
             }
         },
 
+        async getPendingRentsOfShop(shop_no){
+            try{
+                const pool=await poolPromise
+                const result=await pool.request()
+                .input('shop_no',sql.Int,shop_no)
+                .execute('getAllPendingRentsOfStore')
+                return result.recordset
+            }catch(error){
+                console.log('Error in getting all pending rents of shop')
+                return false
+            }
+        },
+
         async updateRent(shop_no,rent)
         {
             try {
@@ -58,11 +71,24 @@ const Rent={
                 
             } catch (error) {
                 console.log('Error in updating rent')
-                return false
-                
+                return false   
             }
-            
         },
+
+        async payMonthlyRent(payment_id, transaction_id){
+            try {
+                const pool =await poolPromise
+                await pool.request()
+                .input('payment_id',sql.Int,payment_id)
+                .input('transaction_id',sql.Int,transaction_id)
+                .execute('payMonthlyRent')
+                return true
+            } catch (error) {
+                console.log('Error in paying rent')
+                return false
+            }
+        },
+
         async getRevenue(username,date)
         {
             try {
