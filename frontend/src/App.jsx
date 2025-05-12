@@ -9,6 +9,7 @@ import ProtectedRoute from './componenets/ProtectedRoute.jsx';
 import AllSubscribersPage from './pages/admin/AllSubscribersPage.jsx';
 import FeedbackPage from './pages/admin/FeedbackPage.jsx';
 import {createBrowserRouter,RouterProvider} from "react-router-dom"
+import SubAdminDashboardPage from './pages/subadmin/SubAdminDashboardPage.jsx';
 const App=()=>{
    const theme = darkTheme;
    const router=createBrowserRouter([
@@ -35,6 +36,10 @@ const App=()=>{
     {
       path:"/admin/feedbacks",
       element:<FeedbackPage/>
+    },
+    {
+      path:"/owner/dashboard",
+      element:<SubAdminDashboardPage/>
     }
    ])
   return (
