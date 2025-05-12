@@ -1,4 +1,5 @@
 import { sql, poolPromise } from "../config/dbconfig.js"
+import { getPendingRentsofShop } from "../controllers/customer.controller.js"
 
 const Bill={
     async InsertBill(shop_no,type,amount,month_year)
@@ -25,8 +26,8 @@ const Bill={
             try {
                 const pool=await poolPromise
                 const result=await pool.request()
-                .input('shop_number',sql.Int,shop_no)
-                .execute('getShopBills')
+                .input('shop_no',sql.Int,shop_no)
+                .execute('GetBillsStatusByShop')
                 return result.recordset
                 
             } catch (error) {
@@ -39,17 +40,45 @@ const Bill={
         {
             try {
                 const pool=await poolPromise
-            const result=await pool.request()
-            .input('shop_no',sql.Int,shop_no)
-            .execute('getActiveBillsByShop')
-            return result.recordset
-                
+                const result=await pool.request()
+                .input('shop_no',sql.Int,shop_no)
+                .execute('getActiveBills')
+                return result.recordset   
             } catch (error) {
-                console.log("Error in fecthing bills")
+                console.log("Error in fecthing sum of pending bills")
             }
-            
-        }
+        },
 
+        async getPendingBillsofShop(shop_no){
+             try {
+                const pool=await poolPromise
+                const result=await pool.request()
+                .input('shop_no',sql.Int,shop_no)
+                .execute('getAllPendingBillsOfStore')
+                return result.recordset   
+            } catch (error) {
+                console.log("Error in fecthing list of pending bills")
+            }
+        },
+
+        async payPendingBill(amount, method, type, bill_type, username, shop_no, month_year){
+            try {
+                const pool=await poolPromise
+                const result=await pool.request()
+                .input('amount',sql.Decimal(10, 2),amount)
+                .input('method',sql.VarChar,method)
+                .input('type',sql.VarChar,type)
+                .input('bill_type',sql.VarChar,bill_type)
+                .input('username',sql.VarChar,username)
+                .input('shop_no',sql.Int,shop_no)
+                .input('month_year',sql.Date,month_year)
+                .execute('payPendingBill')
+                return true  
+            } catch (error) {
+                console.log("Error in paying pending bill", error)
+                return false
+            }
+        }
 }
 
 export default Bill

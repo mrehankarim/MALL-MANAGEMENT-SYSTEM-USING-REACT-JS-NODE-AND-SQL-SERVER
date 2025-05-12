@@ -39,6 +39,7 @@ const Subscription={
             return null;
         }
     },
+    
     async getTotalRevenueBySubscriber(username) {
         try {
             const pool = await poolPromise;
