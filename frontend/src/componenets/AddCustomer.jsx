@@ -39,7 +39,7 @@ const AddCustomer = ({setSignUp}) => {
                 firstName: '',
                 lastName: '',
                 password: '',
-                role:'admin'
+                role:'store_owner'
             });
             setSignUp(prev=>!prev)
             alert("Customer added successfully");

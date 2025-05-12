@@ -12,7 +12,7 @@ import Feedback from "../models/Feedback.Model.js"
 import Attendance from "../models/Attendance.Model.js"
 import Payroll from "../models/Payroll.Model.js"
 import Employee from "../models/Employee.Model.js"
-
+import bcrypt from "bcrypt"
 
 function validateEmail(email) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -42,49 +42,55 @@ const getAllStores=asyncHandler(async(req,res)=>{
   )
 })
 
-const addCustomer=asyncHandler(async (req,res)=>{
-    const {username,email,firstName,lastName,role,password}=req.body
+const addCustomer = asyncHandler(async (req, res) => {
+    const { username, email, firstName, lastName, role, password } = req.body;
 
-    if([username,email,firstName,lastName,role,password].some((field)=>{
-        field?.trim()==="" || field===undefined
-    }))
-    {
-        throw new apiError(400,"All field are reuqired")
+    if ([username, email, firstName, lastName, role, password].some(field => !field || field.trim() === "")) {
+        throw new apiError(400, "All fields are required");
     }
-    if(!validateEmail(email))
-    {
-        throw new apiError(400,"Inavlid email")
+
+    if (!validateEmail(email)) {
+        throw new apiError(400, "Invalid email");
     }
-    let existingUser=await User.getUserByEmail(email)
-    
-    if(existingUser.length>0)
-    {
-        throw new apiError(400,"email already exists")   
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const trimmedUsername = username.trim();
+
+    let existingUser = await User.getUserByEmail(normalizedEmail);
+    if (existingUser.length > 0) {
+        throw new apiError(400, "Email already exists");
     }
-    else
-    {
-        existingUser=await User.getUserByUsername(username)
-        if(existingUser.length>0)
-        {
-            throw new apiError(400,"username already exists")    
-        }
+
+    existingUser = await User.getUserByUsername(trimmedUsername);
+    if (existingUser.length > 0) {
+        throw new apiError(400, "Username already exists");
     }
-    const hashedPassword=await bcrypt.hash(password,10)
-    await User.createUser({username,email,role,firstName,lastName,password:hashedPassword,subadmin:req.user?.username})
-    
-    const createdUser=await User.getUserByEmail(email);
-    if(createdUser.length==0)
-    {
-        throw new apiError(500,"Something went wront while crating user")
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await User.createUser({
+        username: trimmedUsername,
+        email: normalizedEmail,
+        role,
+        firstName,
+        lastName,
+        password: hashedPassword,
+        subadmin: req.user?.username
+    });
+
+    const createdUser = await User.getUserByEmail(normalizedEmail);
+    if (createdUser.length === 0) {
+        throw new apiError(500, "Something went wrong while creating user");
     }
+
     delete createdUser[0].password;
     delete createdUser[0].refreshToken;
 
-    res.status(200).json( 
-        new apiResponse(200,createdUser[0],"User created successfully")
-    )
+    res.status(200).json(
+        new apiResponse(200, createdUser[0], "User created successfully")
+    );
+});
 
-})
 //add controllers for deleting a store or updading it
 //extract customer controllers separate later
 const allocateShopToStore=asyncHandler(async(req,res)=>{
@@ -628,7 +634,14 @@ const generateAttendance=asyncHandler(async(req, res)=>{
     );
 });
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance,addNewEmployee}
+const getCustomers=asyncHandler(async(req,res)=>{
+  const username=req?.user.username
+  const customers=await User.getUsersBySubadmin(username)
+  res.status(200).json(new apiResponse(200,customers,"Customer fecthed successfully"))
+
+})
+
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance,addNewEmployee,getCustomers}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it

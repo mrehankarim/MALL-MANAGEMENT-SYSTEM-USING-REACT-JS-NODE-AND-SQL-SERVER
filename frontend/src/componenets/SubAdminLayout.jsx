@@ -13,14 +13,15 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CommentIcon from '@mui/icons-material/Comment';
-import CardMembershipOutlinedIcon from '@mui/icons-material/CardMembershipOutlined';
-import ContentPasteOffOutlinedIcon from '@mui/icons-material/ContentPasteOffOutlined';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Button } from '@mui/material';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { NavLink, useNavigate } from 'react-router-dom';
+import Person3Icon from '@mui/icons-material/Person3';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import axios from 'axios';
 
 const drawerWidth = 240;
@@ -116,10 +117,10 @@ export default function SubAdminLayout({ username, children }) {
   };
 
   const navItems = [
-    { label: 'Dashboard', path: '/admin/dashboard', icon: <HomeOutlinedIcon /> },
-    { label: 'Subscribers', path: '/admin/subscribers', icon: <CardMembershipOutlinedIcon /> },
-    { label: 'Lifetime Subscribers', path: '/admin/allsubscribers', icon: <ContentPasteOffOutlinedIcon /> },
-    { label: 'Feedbacks', path: '/admin/feedbacks', icon: <CommentIcon /> },
+    { label: 'Dashboard', path: '/owner/dashboard', icon: <HomeOutlinedIcon /> },
+    { label: 'Shops', path: '/owner/shops', icon: <InventoryIcon /> },
+    { label: 'store owners', path: '/owner/storeowners', icon: <Person3Icon /> },
+    { label: 'stores', path: '/owner/stores', icon: <StorefrontIcon /> },
   ];
 
   return (
