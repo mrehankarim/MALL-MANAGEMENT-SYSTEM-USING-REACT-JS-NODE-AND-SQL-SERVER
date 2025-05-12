@@ -72,6 +72,18 @@ const User={
         } catch (error) {
             console.log("Error in MatchCustomer Admin");
         }
+    },
+    async getUsersBySubadmin(username)
+    {
+      try {
+        const pool=await poolPromise
+        const customers=await pool.request().input('username',sql.VarChar,username)
+        .execute('getCustomer')
+        return customers.recordset
+      } catch (error) {
+        console.log("Error")
+      }
+
     }
 }
 export default User
