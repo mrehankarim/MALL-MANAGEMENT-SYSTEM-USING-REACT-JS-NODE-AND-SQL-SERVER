@@ -16,9 +16,16 @@ const StoreBills = () => {
     const [search, setSearch] = useState('');
 
     useEffect(() => {
+
+        const shopNo = localStorage.getItem('shop_no'); // Retrieve shop_no from local storage
+        if (!shopNo) {
+        console.error('Shop number not found in local storage');
+        return;
+        }
+
         const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/v1/customer/allbills', {
+                const response = await axios.get(`http://localhost:3000/api/v1/customer/allbills?shop_no=${shopNo}`, {
                     headers: {
                         Accept: 'application/json',
                     },

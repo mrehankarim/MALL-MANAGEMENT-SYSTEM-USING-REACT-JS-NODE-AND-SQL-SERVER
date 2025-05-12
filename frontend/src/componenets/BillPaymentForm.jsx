@@ -28,10 +28,16 @@ const RentPaymentForm = ({ open, onClose, title }) => {
   const [pendingBills, setPendingBills] = useState([]);
 
   useEffect(() => {
+    const shopNo = localStorage.getItem('shop_no'); 
+      if (!shopNo) {
+        console.error('Shop number not found in local storage');
+        return;
+      }
+
     const fetchPendingBills = async () => {
       try {
         const { data } = await axios.get(
-          'http://localhost:3000/api/v1/customer/allpendingbills',
+          `http://localhost:3000/api/v1/customer/allpendingbills?shop_no=${shopNo}`,
           { withCredentials: true }
         );
         setPendingBills(data.data || []);
@@ -64,6 +70,12 @@ const RentPaymentForm = ({ open, onClose, title }) => {
     setLoading(true);
     setError(null);
 
+    const shopNo = localStorage.getItem('shop_no'); 
+      if (!shopNo) {
+        console.error('Shop number not found in local storage');
+        return;
+      }
+
     try {
       if (!formData.bill || !formData.method) {
         setError('Please select a bill and payment method.');
@@ -76,12 +88,13 @@ const RentPaymentForm = ({ open, onClose, title }) => {
       const payload = {
         amount: parseFloat(amount).toFixed(2), 
         type: 'bill', 
+        bill_type: type,
         method: String(formData.method), 
         month_year: new Date(month_year).toISOString().split('T')[0],
       };
 
       await axios.post(
-        'http://localhost:3000/api/v1/customer/paybill',
+        `http://localhost:3000/api/v1/customer/paybill?shop_no=${shopNo}`,
         payload,
         {
           headers: { Accept: 'application/json' },

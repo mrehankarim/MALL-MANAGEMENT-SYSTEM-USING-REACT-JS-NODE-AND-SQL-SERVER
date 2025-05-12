@@ -20,21 +20,29 @@ const RentPaymentForm = ({ open, onClose, title }) => {
 
   const [formData, setFormData] = useState({
     method: '',
-    rent: null, // Updated from "bill" to "rent"
+    rent: null, 
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [pendingRents, setPendingRents] = useState([]); // Updated from "pendingBills" to "pendingRents"
+  const [pendingRents, setPendingRents] = useState([]); 
 
   useEffect(() => {
-    const fetchPendingRents = async () => {
+    
+      const fetchPendingRents = async () => {
+
+      const shopNo = localStorage.getItem('shop_no'); 
+      if (!shopNo) {
+        console.error('Shop number not found in local storage');
+        return;
+      }
+
       try {
         const { data } = await axios.get(
-          'http://localhost:3000/api/v1/customer/allpendingrents',
+          `http://localhost:3000/api/v1/customer/allpendingrents?shop_no=${shopNo}`,
           { withCredentials: true }
         );
-        setPendingRents(data.data || []); // Ensure the data is set correctly
+        setPendingRents(data.data || []); 
       } catch (err) {
         console.error('Failed to fetch pending rents', err);
         setPendingRents([]);
@@ -43,7 +51,7 @@ const RentPaymentForm = ({ open, onClose, title }) => {
 
     if (open) {
       fetchPendingRents();
-      setFormData({ method: '', rent: null }); // Reset form data when modal opens
+      setFormData({ method: '', rent: null }); 
       setError(null);
     }
   }, [open]);
@@ -64,6 +72,12 @@ const RentPaymentForm = ({ open, onClose, title }) => {
     setLoading(true);
     setError(null);
 
+    const shopNo = localStorage.getItem('shop_no'); 
+      if (!shopNo) {
+        console.error('Shop number not found in local storage');
+        return;
+      }
+
     try {
       if (!formData.rent || !formData.method) {
         setError('Please select rent and payment method.');
@@ -74,13 +88,13 @@ const RentPaymentForm = ({ open, onClose, title }) => {
       const { month_year } = formData.rent;
 
       const payload = {
-        method: String(formData.method), // Payment method
-        type: 'rent', // Fixed type as "rent"
-        month_year: new Date(month_year).toISOString().split('T')[0], // Format date as YYYY-MM-DD
+        method: String(formData.method), 
+        type: 'rent', 
+        month_year: new Date(month_year).toISOString().split('T')[0], 
       };
 
       await axios.post(
-        'http://localhost:3000/api/v1/customer/payrent',
+        `http://localhost:3000/api/v1/customer/payrent?shop_no=${shopNo}`,
         payload,
         {
           headers: { Accept: 'application/json' },

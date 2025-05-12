@@ -34,7 +34,7 @@ const SubmitFeedbackForm = ({ onClose }) => {
     setSuccessMsg(null);
 
     try {
-      console.log('form dataaaa', formData)
+      
       const response = await axios.post(
         'http://localhost:3000/api/v1/customer/addfeedback',
         {

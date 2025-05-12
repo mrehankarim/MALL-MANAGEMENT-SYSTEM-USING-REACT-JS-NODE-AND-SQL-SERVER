@@ -61,13 +61,14 @@ const Bill={
             }
         },
 
-        async payPendingBill(amount, method, type, username, shop_no, month_year){
+        async payPendingBill(amount, method, type, bill_type, username, shop_no, month_year){
             try {
                 const pool=await poolPromise
                 const result=await pool.request()
                 .input('amount',sql.Decimal(10, 2),amount)
                 .input('method',sql.VarChar,method)
                 .input('type',sql.VarChar,type)
+                .input('bill_type',sql.VarChar,bill_type)
                 .input('username',sql.VarChar,username)
                 .input('shop_no',sql.Int,shop_no)
                 .input('month_year',sql.Date,month_year)

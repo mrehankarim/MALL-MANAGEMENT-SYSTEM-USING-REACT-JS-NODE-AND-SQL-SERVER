@@ -13,11 +13,19 @@ const CustomerPanel = () => {
   const [pendingBills, setPendingBills] = useState(0);
 
   useEffect(() => {
+    const shopNo = localStorage.getItem('shop_no'); // Retrieve shop_no from local storage
+
+    if (!shopNo) {
+      console.error('Shop number not found in local storage');
+      return;
+    }
+
     const fetchTotalRevenue = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/customer/totalrevenue', {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/customer/totalrevenue?shop_no=${shopNo}`,
+          { withCredentials: true }
+        );
         const revenue = response.data.data[0]?.total_revenue || 0;
         setTotalRevenue(revenue);
       } catch (error) {
@@ -27,9 +35,10 @@ const CustomerPanel = () => {
 
     const fetchMonthlyRevenue = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/customer/monthlyrevenue', {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/customer/monthlyrevenue?shop_no=${shopNo}`,
+          { withCredentials: true }
+        );
         const rawData = response.data.data;
         const formattedData = rawData.map((item) => ({
           date: item.MonthYear,
@@ -43,9 +52,10 @@ const CustomerPanel = () => {
 
     const fetchPendingRent = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/customer/activerents', {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/customer/activerents?shop_no=${shopNo}`,
+          { withCredentials: true }
+        );
         const rentAmount = response.data.data[0]?.amount || 0;
         setPendingRent(rentAmount);
       } catch (error) {
@@ -55,9 +65,10 @@ const CustomerPanel = () => {
 
     const fetchPendingBills = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/v1/customer/bills', {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `http://localhost:3000/api/v1/customer/bills?shop_no=${shopNo}`,
+          { withCredentials: true }
+        );
         const billAmount = response.data.data[0]?.amount || 0;
         setPendingBills(billAmount);
       } catch (error) {
@@ -87,9 +98,9 @@ const CustomerPanel = () => {
       </Box>
       
       <Box sx={{ mt: 4, display: 'flex', gap: 2 }}>
-      <InsertStoreRevenueCard />
-      <AddFeedbackCard />
-    </Box>
+        <InsertStoreRevenueCard />
+        <AddFeedbackCard />
+      </Box>
     </>
   );
 };

@@ -35,9 +35,14 @@ const InsertRevenueForm = ({ open, onClose, title, storeId }) => {
     setError(null);
 
     try {
-        console.log(formData);
-      const response = await axios.post(
-        `http://localhost:3000/api/v1/customer/insertrevenue?store_id=${1}`,
+        const storeID = localStorage.getItem('store_id'); // Retrieve shop_no from local storage
+        if (!storeID) {
+          console.error('Store ID not found in local storage');
+          return;
+        }
+
+        const response = await axios.post(
+        `http://localhost:3000/api/v1/customer/insertrevenue?store_id=${storeID}`,
         formData,
         {
           headers: {

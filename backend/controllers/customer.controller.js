@@ -4,9 +4,11 @@ import apiResponse from '../utils/apiResponse.js'
 import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
+import Shop from "../models/Shop.Model.js"
 import DailyStoreRevenue from "../models/DAILY_STORE_REVENUE.MODEL.js"
 import Feedback from "../models/Feedback.Model.js"
 import { toASCII } from "punycode"
+
 const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     //user would be loggedIn while inserting daily revenue
     //dont take store_id from user in form just do it programmtically on front end
@@ -43,8 +45,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
   const getActiveBillsOfStore=asyncHandler(async(req,res)=>{
     //get active bills of a store
     
-    // const shop_no=req.query.shop_no
-    const shop_no=101 // for now, it is hardcoded
+    const shop_no=req.query.shop_no
     if(!shop_no)
     {
       throw new apiError(400,"Shop no is required")
@@ -63,8 +64,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
   const getActiveRent=asyncHandler(async (req,res)=>{
     //this function shop no of store from front end and fetches all it's active bills 
 
-    // const shop_no=req.query.shop_no
-    const shop_no=101 //for now, it is hardcoded
+    const shop_no=req.query.shop_no
 
     if(!shop_no)
     {
@@ -85,8 +85,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const getAllRentsOfShop=asyncHandler(async(req, res)=>{
 
-    // const shop_no=req.query.shop_no
-    const shop_no=101 // for now, it is hardcoded
+    const shop_no=req.query.shop_no
     if(!shop_no)
     {
       throw new apiError(400,"shop no is required")
@@ -105,8 +104,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const getPendingRentsofShop=asyncHandler(async(req, res)=>{
 
-    // const shop_no=req.query.shop_no
-    const shop_no=101
+    const shop_no=req.query.shop_no
     if(!shop_no)
     {
       throw new apiError(400,"shop no is required")
@@ -125,8 +123,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const getPendingBillsofShop=asyncHandler(async(req, res)=>{
 
-    // const shop_no=req.query.shop_no
-    const shop_no=101
+    const shop_no=req.query.shop_no
     if(!shop_no)
     {
       throw new apiError(400,"shop no is required")
@@ -145,8 +142,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const getAllBillsOfShop=asyncHandler(async(req, res)=>{
 
-    // const shop_no=req.query.shop_no
-    const shop_no=101 // for now, it is hardcoded
+    const shop_no=req.query.shop_no
     if(!shop_no)
     {
       throw new apiError(400,"shop no is required")
@@ -165,8 +161,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const getTotalStoreRevenue=asyncHandler(async(req, res)=>{
 
-    // const shop_no=req.query.shop_no
-    const shop_no=101 // for now, it is hardcoded
+    const shop_no=req.query.shop_no
     if(!shop_no)
     {
       throw new apiError(400,"shop no is required")
@@ -184,8 +179,8 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
   })
   
   const getMonthlyRevenue=asyncHandler(async(req, res)=>{
-    // const shop_no=req.query.shop_no
-    const shop_no=101 // for now, it is hardcoded
+
+    const shop_no=req.query.shop_no
     if(!shop_no)
       {
         throw new apiError(400,"shop no is required")
@@ -203,6 +198,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
   })
 
   const getRevenueBetweenDates=asyncHandler(async(req,res)=>{
+
     const {store_id,startDate,endDate}=req.query
     if([store_id,startDate,endDate].some((field)=>field==""))
     {
@@ -248,21 +244,19 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 })
 
   const payBill=asyncHandler(async(req,res)=>{
-    const {amount, method, type, month_year}=req.body
+    const {amount, method, type, bill_type, month_year}=req.body
 
-    // const shop_no=req.query.shop_no
-    // const username=req.user?.username
-    const shop_no=101
-    const username='subscriber1'
+    const shop_no=req.query.shop_no
+    const username=req.user?.username
 
-    if([method, type, month_year].some((field)=>{
+    if([method, type, bill_type, month_year].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
       throw new apiError(400,"All fields are required")
     }
 
-    const paybill=await Bill.payPendingBill(amount, method, type, username, shop_no, month_year);
+    const paybill=await Bill.payPendingBill(amount, method, type, bill_type, username, shop_no, month_year);
     if(!paybill){
       throw new apiError(500,"Something went wrong")
     }
@@ -276,10 +270,8 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     //store owner will pay rent
     const {method, type, month_year}=req.body
 
-    // const shop_no=req.query.shop_no
-    // const username=req.user?.username
-    const shop_no=101
-    const username='subscriber1'
+    const shop_no=req.query.shop_no
+    const username=req.user?.username
 
     if([method, type, month_year].some((field)=>{
       field==undefined || field.trim()==""
@@ -300,7 +292,22 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     )
   })
 
-  export {getRevenueBetweenDates,insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue, payBill, payRent, getPendingRentsofShop, getPendingBillsofShop}
+  const getShopNo_StoreIDByUsername=asyncHandler(async(req, res)=>{
+
+    const username=req.query.username
+
+    const shopNo_storeID=await Shop.getShopAndStoreByUsername(username)
+
+    if(!shopNo_storeID){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,shopNo_storeID,'shop no and store id by username fetched successfully')
+    )
+  })
+
+  export {getRevenueBetweenDates,insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue, payBill, payRent, getPendingRentsofShop, getPendingBillsofShop, getShopNo_StoreIDByUsername}
 
   //customer can get active rents
   //can get total revenue of till date of month

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import verifyJwt from "../middleware/auth.middleware.js";
 import verifyCustomer from "../middleware/verifyCustomer.js";
-import {getRevenueBetweenDates, insertStoreDailyRevenue,getActiveRent,getActiveBillsOfStore, addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue, payBill, payRent, getPendingRentsofShop, getPendingBillsofShop } from "../controllers/customer.controller.js";
+import {getRevenueBetweenDates, insertStoreDailyRevenue,getActiveRent,getActiveBillsOfStore, addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue, payBill, payRent, getPendingRentsofShop, getPendingBillsofShop, getShopNo_StoreIDByUsername } from "../controllers/customer.controller.js";
 
 const router=Router()
 router.route('/insertrevenue').post(insertStoreDailyRevenue); //////////
@@ -17,5 +17,6 @@ router.route('/allpendingrents').get(getPendingRentsofShop); ////////
 router.route('/allpendingbills').get(getPendingBillsofShop); ////////
 router.route('/revenue/daily').get(verifyJwt,verifyCustomer,getRevenueBetweenDates);
 router.route('/addfeedback').post(addFeedback); ///////////
+router.route('/getshopno-storeid').get(getShopNo_StoreIDByUsername); //////////
 
 export default router

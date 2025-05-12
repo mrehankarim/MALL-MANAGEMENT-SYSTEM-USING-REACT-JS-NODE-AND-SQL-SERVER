@@ -22,12 +22,13 @@ const InsertStoreRevenueCard = () => {
           display: 'flex',
           alignItems: 'center',
           gap: 1.5,
-          background: 'rgba(59, 130, 246, 0.08)',
+          background: '#3b82f6',
           border: '1px solid #3b82f6',
-          borderRadius: '14px',
+          borderRadius: '2px',
           padding: '16px 24px',
           margin: 5,
           width: '90%',
+          height:70,
           maxWidth: 300,
           color: '#f1f5f9',
           cursor: 'pointer',
@@ -41,9 +42,9 @@ const InsertStoreRevenueCard = () => {
         {/* Icon Container */}
         <Box
           sx={{
-            backgroundColor: '#3b82f6', // Blue background for icon
-            borderRadius: '12px',
-            padding: 1.5,
+            backgroundColor: '#000000', // Blue background for icon
+            borderRadius: '5px',
+            padding: 0.5,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
