@@ -4,22 +4,39 @@ import apiResponse from '../utils/apiResponse.js'
 import Store from "../models/Store.Model.js"
 import Bill from "../models/Bill.Model.js"
 import Rent from "../models/Rent.Model.js"
+import Shop from "../models/Shop.Model.js"
 import DailyStoreRevenue from "../models/DAILY_STORE_REVENUE.MODEL.js"
 import Feedback from "../models/Feedback.Model.js"
+import { toASCII } from "punycode"
+
 const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     //user would be loggedIn while inserting daily revenue
     //dont take store_id from user in form just do it programmtically on front end
-    const {store_id,total_earnings,date}=req.body
-    if([store_id,total_earnings,date].some((field)=>{
+    const store_id=req.query.store_id
+    const {total_earnings,date}=req.body
+
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+    
+    if([store_id,total_earnings,formattedDate].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
       throw new apiError(400,"All fields are required")
     }
-    if(!await Store.insertDailyRevenue(store_id,total_earnings,date))
+
+    if(isNaN(total_earnings)){
+            throw new apiError(400,"invalid amount entered")
+    }
+
+    if(total_earnings<1){
+      throw new apiError(400,"total earnings amount should be greater than 0")
+    }
+
+    if(!await Store.insertDailyRevenue(store_id,total_earnings,formattedDate))
     {
       throw new apiError(500,"Something went wrong while inserting sales")
     }
+
     res.status(200).json(
       new apiResponse(200,{},"Revenue inserted successfully")
     )
@@ -27,62 +44,165 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const getActiveBillsOfStore=asyncHandler(async(req,res)=>{
     //get active bills of a store
-  
+    
     const shop_no=req.query.shop_no
     if(!shop_no)
     {
       throw new apiError(400,"Shop no is required")
     }
     const bills=await Bill.getActiveBills(shop_no)
+
     if(!bills)
     {
-      throw new apiError(5000,"Something went wrong")
+      throw new apiError(500,"Something went wrong")
     }
-    res.status(500).json(
-      new apiResponse(200,bills,"Bill fetched successfully")
+    res.status(200).json(
+      new apiResponse(200,bills,"pending Bill amount fetched successfully")
     )
   })
+
   const getActiveRent=asyncHandler(async (req,res)=>{
     //this function shop no of store from front end and fetches all it's active bills 
+
+    const shop_no=req.query.shop_no
+
+    if(!shop_no)
+    {
+      throw new apiError(400,"shop no is required")
+    }
+
+    const rents=await Rent.getActiveRentsByshop(shop_no)
+
+    if(!rents)
+    {
+      throw new apiError(500,"Something went wrong")
+    }
+    
+    res.status(200).json(
+      new apiResponse(200,rents,'Rents fetched successfully')
+    )
+  })
+
+  const getAllRentsOfShop=asyncHandler(async(req, res)=>{
+
     const shop_no=req.query.shop_no
     if(!shop_no)
     {
       throw new apiError(400,"shop no is required")
     }
-    const rents=await Rent.getActiveRentsByshop(shop_no)
-    if(!rents)
-    {
+
+    const allRents=await Rent.getAllRentsOfShop(shop_no)
+
+    if(!allRents){
       throw new apiError(500,"Something went wrong")
     }
+
     res.status(200).json(
-      new apiResponse(200,rents,'Rents fetched successfully')
+      new apiResponse(200,allRents,'All Rents of Shop fetched successfully')
     )
   })
-  const getRevenueBetweenDates=asyncHandler(async(req,res)=>{
-    const {store_id,startDate,endDate}=req.query
-    if([store_id,startDate,endDate].some((field)=>field==""))
+
+  const getPendingRentsofShop=asyncHandler(async(req, res)=>{
+
+    const shop_no=req.query.shop_no
+    if(!shop_no)
     {
-      throw new apiError(400,"All fields are rquired")
+      throw new apiError(400,"shop no is required")
     }
-    if(new Date(startDate)>new Date(endDate))
-    {
-      throw new apiError(400,"End date must be greater than start date")
+
+    const pendingRents=await Rent.getPendingRentsOfShop(shop_no);
+
+    if(!pendingRents){
+      throw new apiError(500,"Something went wrong")
     }
-    const revenue=await DailyStoreRevenue.getDailytRevenue(startDate,endDate,store_id)
-    if(!revenue)
-    {
-      throw new apiError(500,"Internal server Error")
-    }
+
     res.status(200).json(
-      new apiResponse(200,revenue,'Revenue fetched successfully')
+      new apiResponse(200,pendingRents,'All pending rents of Shop fetched successfully')
     )
   })
+
+  const getPendingBillsofShop=asyncHandler(async(req, res)=>{
+
+    const shop_no=req.query.shop_no
+    if(!shop_no)
+    {
+      throw new apiError(400,"shop no is required")
+    }
+
+    const pendingBills=await Bill.getPendingBillsofShop(shop_no);
+
+    if(!pendingBills){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,pendingBills,'All pending rents of Shop fetched successfully')
+    )
+  })
+
+  const getAllBillsOfShop=asyncHandler(async(req, res)=>{
+
+    const shop_no=req.query.shop_no
+    if(!shop_no)
+    {
+      throw new apiError(400,"shop no is required")
+    }
+
+    const allBills=await Bill.getBillsOfShop(shop_no)
+
+    if(!allBills){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,allBills,'All Bills of Shop fetched successfully')
+    )
+  })
+
+  const getTotalStoreRevenue=asyncHandler(async(req, res)=>{
+
+    const shop_no=req.query.shop_no
+    if(!shop_no)
+    {
+      throw new apiError(400,"shop no is required")
+    }
+
+    const totalReveue=await DailyStoreRevenue.getTotalRevenueOfStore(shop_no)
+    
+    if(!totalReveue){
+      throw new apiError(500,"Something went wrong")
+    }
+    
+    res.status(200).json(
+      new apiResponse(200,totalReveue,'Total Revenue of Store fetched successfully')
+    )
+  })
+  
+  const getMonthlyRevenue=asyncHandler(async(req, res)=>{
+
+    const shop_no=req.query.shop_no
+    if(!shop_no)
+      {
+        throw new apiError(400,"shop no is required")
+      }
+      
+      const monthlyRevenue=await DailyStoreRevenue.getMonthlyRevenueOfStore(shop_no)
+
+      if(!monthlyRevenue){
+        throw new apiError(500,"Something went wrong")
+      }
+
+      res.status(200).json(
+      new apiResponse(200,monthlyRevenue,'Monthly Revenue of Store fetched successfully')
+      )
+  })
+
   const addFeedback=asyncHandler(async(req, res)=>{
 
-    const {message, rating}=req.body
     const username=req.user?.username
+    const {message, rating}=req.body
 
-    if([message, rating].some((field)=>{
+    if([message].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
@@ -104,10 +224,70 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 })
 
   const payBill=asyncHandler(async(req,res)=>{
-    //store owner will pay bill
+    const {amount, method, type, bill_type, month_year}=req.body
+
+    const shop_no=req.query.shop_no
+    const username=req.user?.username
+
+    if([method, type, bill_type, month_year].some((field)=>{
+      field==undefined || field.trim()==""
+    }))
+    {
+      throw new apiError(400,"All fields are required")
+    }
+
+    const paybill=await Bill.payPendingBill(amount, method, type, bill_type, username, shop_no, month_year);
+    if(!paybill){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,paybill,'Bill paid successfully')
+    )
   })
 
-  export {getRevenueBetweenDates,insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback}
+  const payRent=asyncHandler(async(req,res)=>{
+    //store owner will pay rent
+    const {method, type, month_year}=req.body
+
+    const shop_no=req.query.shop_no
+    const username=req.user?.username
+
+    if([method, type, month_year].some((field)=>{
+      field==undefined || field.trim()==""
+    }))
+    {
+      throw new apiError(400,"All fields are required")
+    }
+
+    const result= await Rent.getMonthlyRentOfStore(shop_no) // ye shop_no ka rent utha kr lata he
+    const amount = result[0]?.rent_amount;
+    const payrent=await Rent.payMonthlyRent(amount, method, type, username, shop_no, month_year);
+    if(!payrent){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,payrent,'Rent paid successfully')
+    )
+  })
+
+  const getShopNo_StoreIDByUsername=asyncHandler(async(req, res)=>{
+
+    const username=req.query.username
+
+    const shopNo_storeID=await Shop.getShopAndStoreByUsername(username)
+
+    if(!shopNo_storeID){
+      throw new apiError(500,"Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200,shopNo_storeID,'shop no and store id by username fetched successfully')
+    )
+  })
+
+  export {insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue, payBill, payRent, getPendingRentsofShop, getPendingBillsofShop, getShopNo_StoreIDByUsername}
 
   //customer can get active rents
   //can get total revenue of till date of month

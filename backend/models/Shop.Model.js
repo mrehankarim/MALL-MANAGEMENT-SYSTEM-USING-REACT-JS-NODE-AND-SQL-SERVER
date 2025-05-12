@@ -17,12 +17,12 @@ const Shop = {
         const pool = await poolPromise
         try {
             await pool.request()
-  .input('shop_no', sql.Int, id)
-  .input('location', sql.VarChar, location)
-  .input('status', sql.VarChar, status)
-  .input('shopowner', sql.VarChar, subadmin)
-  .input('rent',sql.Decimal,rent)
-  .execute('addShop')
+            .input('shop_no', sql.Int, id)
+            .input('location', sql.VarChar, location)
+            .input('status', sql.VarChar, status)
+            .input('shopowner', sql.VarChar, subadmin)
+            .input('rent',sql.Decimal,rent)
+            .execute('addShop')
             return true
         } catch (error) {
             console.log(error)
@@ -77,8 +77,39 @@ const Shop = {
             console.log("Erro in fetching shop no")
             return false
         }
-        
+    },
+
+    async getShopAndStoreByUsername(username) {
+        try {
+            const pool = await poolPromise;
+
+            const shopResult = await pool.request()
+            .input('username', sql.VarChar, username)
+            .query(`
+                SELECT shop_no
+                FROM Shop
+                WHERE shopowner = @username
+            `);
+
+            const shopNo = shopResult.recordset[0].shop_no;
+
+            const storeResult = await pool.request()
+            .input('shop_no', sql.Int, shopNo)
+            .query(`
+                SELECT store_id
+                FROM Store
+                WHERE shop_no = @shop_no
+            `);
+
+            const storeId = storeResult.recordset[0].store_id;
+            return { shop_no: shopNo, store_id: storeId };
+
+        } catch (error) {
+            console.log("Error in getShopAndStoreByUsername:", error);
+            throw error;
+        }
     }
+
 }
 
 export default Shop
