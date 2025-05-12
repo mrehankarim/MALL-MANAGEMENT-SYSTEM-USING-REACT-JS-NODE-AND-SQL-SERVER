@@ -10,7 +10,9 @@ const PendingAmountCard = ({ title, value, shopNo }) => {
     <>
       <Card
         sx={{
-          borderRadius: '20px',
+          borderRadius: '9px',
+          borderWidth: '2px',
+          borderColor: '#1e0039',
           backgroundColor: '#020317', // Very dark blue
           color: '#f1f5f9',
           width: '80%',
@@ -24,7 +26,7 @@ const PendingAmountCard = ({ title, value, shopNo }) => {
         <CardContent>
           <Typography
             variant="subtitle2"
-            sx={{ color: '#94a3b8', fontSize: '0.85rem', mb: 0.5 }}
+            sx={{ color: '#94a3b8', fontSize: '0.85rem', mb: 0.5, fontWeight: 'bold' }}
           >
             {title}
           </Typography>

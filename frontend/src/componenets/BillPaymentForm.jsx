@@ -152,7 +152,7 @@ const RentPaymentForm = ({ open, onClose, title }) => {
             borderRadius: '10px',
             p: 4,
             backgroundColor: theme.palette.background.default,
-            width: { md: '50%', xs: '90%' },
+            width: 500,
           }}
         >
           <IconButton
@@ -182,8 +182,8 @@ const RentPaymentForm = ({ open, onClose, title }) => {
               label="Select Bill"
               MenuProps={{
                 disablePortal: true,
-                anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-                transformOrigin: { vertical: 'top', horizontal: 'left' },
+                anchorOrigin: { horizontal: 'left' },
+                transformOrigin: { horizontal: 'left' },
                 PaperProps: { sx: { maxHeight: 200, zIndex: 1401 } },
               }}
               sx={{
@@ -220,8 +220,8 @@ const RentPaymentForm = ({ open, onClose, title }) => {
               label="Payment Method"
               MenuProps={{
                 disablePortal: true,
-                anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-                transformOrigin: { vertical: 'top', horizontal: 'left' },
+                anchorOrigin: { horizontal: 'left' },
+                transformOrigin: {  horizontal: 'left' },
                 PaperProps: { sx: { maxHeight: 200, zIndex: 1401 } },
               }}
               sx={{

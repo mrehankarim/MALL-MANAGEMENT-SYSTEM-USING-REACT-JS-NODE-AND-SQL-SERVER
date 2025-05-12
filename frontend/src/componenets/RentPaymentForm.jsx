@@ -20,18 +20,16 @@ const RentPaymentForm = ({ open, onClose, title }) => {
 
   const [formData, setFormData] = useState({
     method: '',
-    rent: null, 
+    rent: null,
   });
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [pendingRents, setPendingRents] = useState([]); 
+  const [pendingRents, setPendingRents] = useState([]);
 
   useEffect(() => {
-    
-      const fetchPendingRents = async () => {
-
-      const shopNo = localStorage.getItem('shop_no'); 
+    const fetchPendingRents = async () => {
+      const shopNo = localStorage.getItem('shop_no');
       if (!shopNo) {
         console.error('Shop number not found in local storage');
         return;
@@ -42,7 +40,7 @@ const RentPaymentForm = ({ open, onClose, title }) => {
           `http://localhost:3000/api/v1/customer/allpendingrents?shop_no=${shopNo}`,
           { withCredentials: true }
         );
-        setPendingRents(data.data || []); 
+        setPendingRents(data.data || []);
       } catch (err) {
         console.error('Failed to fetch pending rents', err);
         setPendingRents([]);
@@ -51,7 +49,7 @@ const RentPaymentForm = ({ open, onClose, title }) => {
 
     if (open) {
       fetchPendingRents();
-      setFormData({ method: '', rent: null }); 
+      setFormData({ method: '', rent: null });
       setError(null);
     }
   }, [open]);
@@ -72,11 +70,11 @@ const RentPaymentForm = ({ open, onClose, title }) => {
     setLoading(true);
     setError(null);
 
-    const shopNo = localStorage.getItem('shop_no'); 
-      if (!shopNo) {
-        console.error('Shop number not found in local storage');
-        return;
-      }
+    const shopNo = localStorage.getItem('shop_no');
+    if (!shopNo) {
+      console.error('Shop number not found in local storage');
+      return;
+    }
 
     try {
       if (!formData.rent || !formData.method) {
@@ -88,9 +86,9 @@ const RentPaymentForm = ({ open, onClose, title }) => {
       const { month_year } = formData.rent;
 
       const payload = {
-        method: String(formData.method), 
-        type: 'rent', 
-        month_year: new Date(month_year).toISOString().split('T')[0], 
+        method: String(formData.method),
+        type: 'rent',
+        month_year: new Date(month_year).toISOString().split('T')[0],
       };
 
       await axios.post(
@@ -152,7 +150,7 @@ const RentPaymentForm = ({ open, onClose, title }) => {
             borderRadius: '10px',
             p: 4,
             backgroundColor: theme.palette.background.default,
-            width: { md: '50%', xs: '90%' },
+            width: 500,
           }}
         >
           <IconButton
@@ -172,7 +170,7 @@ const RentPaymentForm = ({ open, onClose, title }) => {
             </Typography>
           )}
 
-          {/* Select Rent */}
+          {/* 🔄 Select Rent */}
           <FormControl fullWidth required>
             <InputLabel id="rent-select-label">Select Rent</InputLabel>
             <Select
@@ -182,8 +180,8 @@ const RentPaymentForm = ({ open, onClose, title }) => {
               label="Select Rent"
               MenuProps={{
                 disablePortal: true,
-                anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-                transformOrigin: { vertical: 'top', horizontal: 'left' },
+                anchorOrigin: { horizontal: 'left' },
+                transformOrigin: { horizontal: 'left' },
                 PaperProps: { sx: { maxHeight: 200, zIndex: 1401 } },
               }}
               sx={{
@@ -201,7 +199,8 @@ const RentPaymentForm = ({ open, onClose, title }) => {
               ) : (
                 pendingRents.map((rent) => (
                   <MenuItem key={rent.payment_id} value={rent.payment_id}>
-                    Payment #{rent.payment_id} | {new Date(rent.month_year).toLocaleDateString()} | {rent.status}
+                    #{rent.payment_id} | Rs. {rent.amount} |{' '}
+                    {new Date(rent.month_year).toLocaleDateString()}
                   </MenuItem>
                 ))
               )}
@@ -219,8 +218,8 @@ const RentPaymentForm = ({ open, onClose, title }) => {
               label="Payment Method"
               MenuProps={{
                 disablePortal: true,
-                anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
-                transformOrigin: { vertical: 'top', horizontal: 'left' },
+                anchorOrigin: { horizontal: 'left' },
+                transformOrigin: { horizontal: 'left' },
                 PaperProps: { sx: { maxHeight: 200, zIndex: 1401 } },
               }}
               sx={{
@@ -237,6 +236,31 @@ const RentPaymentForm = ({ open, onClose, title }) => {
               <MenuItem value="UPI">UPI</MenuItem>
             </Select>
           </FormControl>
+
+          {/* Payment Instructions */}
+          {formData.method === 'cash' && (
+            <Typography variant="body2" color="text.secondary">
+              Pay directly at the counter. Receipt will be issued manually.
+            </Typography>
+          )}
+          {formData.method === 'credit_card' && (
+            <Typography variant="body2" color="text.secondary">
+              Use your card at POS terminal: Machine ID 45321X
+            </Typography>
+          )}
+          {formData.method === 'bank_transfer' && (
+            <Typography variant="body2" color="text.secondary">
+              Bank Name: XYZ Bank<br />
+              A/C Number: 1234567890<br />
+              IFSC Code: XYZB0001234
+            </Typography>
+          )}
+          {formData.method === 'UPI' && (
+            <Typography variant="body2" color="text.secondary">
+              Send to UPI ID: rentpay@xyz<br />
+              Use transaction ID as reference.
+            </Typography>
+          )}
 
           <Button
             variant="outlined"

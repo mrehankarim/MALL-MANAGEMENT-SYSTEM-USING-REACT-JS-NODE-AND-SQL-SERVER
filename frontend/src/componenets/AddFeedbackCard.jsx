@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Card, Box, Typography } from '@mui/material';
 import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
-import AddFeedbackForm from './AddFeedbackForm'; // Import the form component
+import AddFeedbackForm from './AddFeedbackForm';
 
 const AddFeedbackCard = () => {
-  const [openForm, setOpenForm] = useState(false); // State to toggle the form
+  const [openForm, setOpenForm] = useState(false);
 
   const handleClick = () => {
-    setOpenForm(true); // Open the form when the card is clicked
+    setOpenForm(true);
   };
 
   const handleClose = () => {
-    setOpenForm(false); // Close the form
+    setOpenForm(false);
   };
 
   return (
@@ -22,50 +22,59 @@ const AddFeedbackCard = () => {
           display: 'flex',
           alignItems: 'center',
           gap: 1.5,
-          background: '#3b82f6',
-          border: '1px solid #3b82f6',
-          borderRadius: '2px',
-          padding: '16px 24px',
-          margin: 5,
+          background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)', // Purple gradient
+          border: 'none',
+          borderRadius: '12px',
+          padding: '18px 24px',
+          margin: 3,
           width: '90%',
-          height:70,
-          maxWidth: 300,
-          color: '#f1f5f9',
+          height: 70,
+          maxWidth: 250,
+          color: '#ffffff',
           cursor: 'pointer',
-          transition: '0.3s',
+          transition: 'all 0.3s ease',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
           '&:hover': {
-            background: 'rgba(59, 130, 246, 0.15)',
-            boxShadow: '0 0 10px rgba(59, 130, 246, 0.5)',
+            transform: 'translateY(-2px)',
+            boxShadow: '0 6px 12px rgba(139, 92, 246, 0.4)', // Purple shadow
+            background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
           },
+          '&:active': {
+            transform: 'translateY(0)',
+          }
         }}
       >
         {/* Icon Container */}
         <Box
           sx={{
-            backgroundColor: '#000000', // Blue background for icon
-            borderRadius: '5px',
-            padding: 0.5,
+            borderRadius: '8px',
+            padding: '6px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             marginRight: 2,
-            minWidth: 56,
-            minHeight: 56,
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(2px)',
           }}
         >
-          <FeedbackOutlinedIcon sx={{ color: '#ffffff', fontSize: 30 }} />
+          <FeedbackOutlinedIcon sx={{ color: '#ffffff', fontSize: 28 }} />
         </Box>
 
         {/* Main Title */}
         <Typography
           variant="h6"
-          sx={{ fontWeight: 'normal', fontSize: '1.1rem' }}
+          sx={{ 
+            fontWeight: 500, 
+            fontSize: '1.15rem',
+            letterSpacing: '0.5px',
+            textShadow: '0 1px 2px rgba(0, 0, 0, 0.1)'
+          }}
         >
           Add Feedback
         </Typography>
       </Card>
 
-      {/* AddFeedbackForm Component as a Popup */}
+      {/* Original Form Design (unchanged) */}
       {openForm && (
         <Box
           onClick={handleClose}
@@ -84,13 +93,12 @@ const AddFeedbackCard = () => {
           }}
         >
           <Box
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the form
+            onClick={(e) => e.stopPropagation()}
             sx={{
               position: 'relative',
-              backgroundColor: '#ffffff',
               borderRadius: '10px',
               padding: 4,
-              width: { md: '50%', xs: '90%' },
+              width: { md: '40%', xs: '90%' },
               boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)',
             }}
           >

@@ -102,7 +102,7 @@ const InsertRevenueForm = ({ open, onClose, title, storeId }) => {
             borderRadius: '10px',
             p: 4,
             backgroundColor: theme.palette.background.default,
-            width: { md: '50%', xs: '90%' },
+            width: 450,
           }}
         >
           <IconButton

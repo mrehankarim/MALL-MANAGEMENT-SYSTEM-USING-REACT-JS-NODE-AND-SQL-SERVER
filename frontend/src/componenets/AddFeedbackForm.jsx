@@ -7,6 +7,8 @@ import {
   Slider,
   CircularProgress,
 } from '@mui/material';
+import { Rating } from '@mui/material'; 
+
 import axios from 'axios';
 
 const SubmitFeedbackForm = ({ onClose }) => {
@@ -66,16 +68,16 @@ const SubmitFeedbackForm = ({ onClose }) => {
         display: 'flex',
         flexDirection: 'column',
         gap: 3,
-        border: '2px solid #1e293b',
-        borderRadius: '10px',
+        border: '1px solid #1e293b',
+        borderRadius: '5px',
         p: 4,
         margin:0,
         backgroundColor: '#020317', // Dark background
-        color: '#f1f5f9', // Light text color
+        color: '#FFFFF', // Light text color
         width: { md: '100%', xs: '100%' },
       }}
     >
-      <Typography variant="h5" fontWeight="bold" textAlign="center" sx={{ color: '#3b82f6' }}>
+      <Typography variant="h5" fontWeight="bold" textAlign="center" sx={{ color: '#FFFFF' }}>
         Submit Feedback
       </Typography>
 
@@ -111,26 +113,26 @@ const SubmitFeedbackForm = ({ onClose }) => {
         }}
       />
 
-      <Box>
+      <Box textAlign="center">
         <Typography gutterBottom sx={{ color: '#94a3b8' }}>
-          Rating: {formData.rating.toFixed(1)}
+          Rating: {(formData.rating ?? 0).toFixed(1)}
         </Typography>
-        <Slider
-          value={formData.rating}
-          onChange={handleSliderChange}
-          step={0.5}
-          marks
-          min={0}
-          max={5}
-          valueLabelDisplay="auto"
-          sx={{
-            color: '#3b82f6',
-            '& .MuiSlider-thumb': { backgroundColor: '#3b82f6' },
-            '& .MuiSlider-track': { backgroundColor: '#3b82f6' },
-            '& .MuiSlider-rail': { backgroundColor: '#1e293b' },
-          }}
-        />
+        <Box display="flex" justifyContent="center" alignItems="center" mt={1}>
+          <Rating
+            name="star-rating"
+            value={formData.rating}
+            precision={0.5}
+            onChange={(event, newValue) => {
+              setFormData({ ...formData, rating: newValue });
+            }}
+            sx={{
+              color: '#facc15', // yellow-400
+            }}
+          />
+        </Box>
       </Box>
+
+
 
       <Button
         variant="contained"

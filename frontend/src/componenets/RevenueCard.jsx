@@ -12,19 +12,31 @@ const RevenueCard = ({ title, value, growthText, chartData }) => {
   return (
     <Card
       sx={{
-        borderRadius: '20px',
-        backgroundColor: '#020317', // Very dark blue
+        borderRadius: '9px',
+        borderWidth: '1px',
+        borderColor: '#25003b',
+        backgroundColor: '#020317',
         color: '#f1f5f9',
         width: '100%',
         maxWidth: 320,
         p: 2,
         boxShadow: '0 0 0 1px #1e293b',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center', // Center content horizontally
       }}
     >
-      <CardContent sx={{ pb: 0 }}>
+      <CardContent
+        sx={{
+          pb: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center', // Center inner content
+        }}
+      >
         <Typography
           variant="subtitle2"
-          sx={{ color: '#94a3b8', fontSize: '0.85rem', mb: 0.5 }}
+          sx={{ color: '#94a3b8', fontSize: '0.85rem', mb: 0.5, fontWeight: 'bold' }}
         >
           {title}
         </Typography>
@@ -36,16 +48,16 @@ const RevenueCard = ({ title, value, growthText, chartData }) => {
           sx={{
             color: '#60a5fa',
             fontSize: '0.75rem',
-            mt: 2, // Added margin-top for separation
+            mt: 2,
             mb: 1,
+            fontWeight: 'bold'
           }}
         >
           {growthText}
         </Typography>
-
       </CardContent>
 
-      <Box sx={{ height: 80 }}>
+      <Box sx={{ height: 80, width: '100%' }}>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>
             <CartesianGrid stroke="#1e293b" vertical={false} />
