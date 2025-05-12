@@ -197,26 +197,6 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
       )
   })
 
-  const getRevenueBetweenDates=asyncHandler(async(req,res)=>{
-
-    const {store_id,startDate,endDate}=req.query
-    if([store_id,startDate,endDate].some((field)=>field==""))
-    {
-      throw new apiError(400,"All fields are rquired")
-    }
-    if(new Date(startDate)>new Date(endDate))
-    {
-      throw new apiError(400,"End date must be greater than start date")
-    }
-    const revenue=await DailyStoreRevenue.getDailytRevenue(startDate,endDate,store_id)
-    if(!revenue)
-    {
-      throw new apiError(500,"Internal server Error")
-    }
-    res.status(200).json(
-      new apiResponse(200,revenue,'Revenue fetched successfully')
-    )
-  })
   const addFeedback=asyncHandler(async(req, res)=>{
 
     const username=req.user?.username
@@ -307,7 +287,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
     )
   })
 
-  export {getRevenueBetweenDates,insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue, payBill, payRent, getPendingRentsofShop, getPendingBillsofShop, getShopNo_StoreIDByUsername}
+  export {insertStoreDailyRevenue,getActiveBillsOfStore,getActiveRent,addFeedback, getAllRentsOfShop, getAllBillsOfShop, getTotalStoreRevenue, getMonthlyRevenue, payBill, payRent, getPendingRentsofShop, getPendingBillsofShop, getShopNo_StoreIDByUsername}
 
   //customer can get active rents
   //can get total revenue of till date of month
