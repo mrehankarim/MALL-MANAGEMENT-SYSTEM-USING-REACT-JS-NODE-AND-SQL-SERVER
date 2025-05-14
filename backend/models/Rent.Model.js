@@ -19,7 +19,6 @@ const Rent={
             return false
         }
     },
-
     async getActiveRentsByshop(shop_no)
         {
             try {
@@ -137,6 +136,19 @@ const Rent={
                 
             }
             
+        },
+        async getMonthlyRent(username)
+        {
+            try {
+                
+                let pool=await poolPromise
+                const response=await pool.request()
+                .input('username',sql.VarChar,username)
+                .execute('getMonthlyRentPayment')
+                return response.recordset
+            } catch (error) {
+                console.log(error)
+            }
         }
 
 }

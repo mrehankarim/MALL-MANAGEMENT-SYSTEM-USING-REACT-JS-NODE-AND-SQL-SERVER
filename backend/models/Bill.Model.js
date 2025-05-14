@@ -4,6 +4,7 @@ import { getPendingRentsofShop } from "../controllers/customer.controller.js"
 const Bill={
     async InsertBill(shop_no,type,amount,month_year)
     {
+        console.log("model",shop_no,type,amount,month_year)
         try {
             const pool=await poolPromise
         pool.request()

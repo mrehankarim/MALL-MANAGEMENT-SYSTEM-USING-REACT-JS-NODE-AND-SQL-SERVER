@@ -1,11 +1,11 @@
 import React from 'react'
-import SubAdminLayout from '../../componenets/SubAdminLayout'
+import LayoutWrapper from '../../componenets/LayoutWrapper'
 import OwnerDashboard from '../../componenets/OwnerDashboard'
 const SubAdminDashboardPage = () => {
   
   return (
     <>
-      <SubAdminLayout><OwnerDashboard/></SubAdminLayout>
+      <LayoutWrapper><OwnerDashboard/></LayoutWrapper>
     </>
   )
 }

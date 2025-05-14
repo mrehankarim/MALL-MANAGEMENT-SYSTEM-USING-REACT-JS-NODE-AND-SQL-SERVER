@@ -22,6 +22,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Person3Icon from '@mui/icons-material/Person3';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from 'axios';
 
 const drawerWidth = 240;
@@ -121,6 +122,7 @@ export default function SubAdminLayout({ username, children }) {
     { label: 'Shops', path: '/owner/shops', icon: <InventoryIcon /> },
     { label: 'store owners', path: '/owner/storeowners', icon: <Person3Icon /> },
     { label: 'stores', path: '/owner/stores', icon: <StorefrontIcon /> },
+    { label: 'rents', path: '/owner/rents', icon: <AttachMoneyIcon /> },
   ];
 
   return (
