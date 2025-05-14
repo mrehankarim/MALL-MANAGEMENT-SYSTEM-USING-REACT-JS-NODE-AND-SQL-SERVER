@@ -9,7 +9,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
 
@@ -21,11 +21,11 @@ const Customers = () => {
     const fetchCustomers = async () => {
       try {
         const res = await axios.get('http://localhost:3000/api/v1/subscriber/customers', {
-          withCredentials: true
+          withCredentials: true,
         });
         setCustomers(res.data.data || []);
       } catch (err) {
-        console.error("Failed to fetch customers", err);
+        console.error('Failed to fetch customers', err);
       } finally {
         setLoading(false);
       }
@@ -35,7 +35,7 @@ const Customers = () => {
   }, []);
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 4, px: 2 }}>
       <Typography variant="h6" sx={{ color: '#f1f5f9', mb: 2 }}>
         Customers
       </Typography>
@@ -44,10 +44,20 @@ const Customers = () => {
           <CircularProgress />
         </Box>
       ) : (
-        <TableContainer component={Paper} sx={{ backgroundColor: "#020317" }}>
-          <Table>
+        <TableContainer
+          component={Paper}
+          sx={{
+            backgroundColor: '#020317',
+            borderRadius: 1,
+            borderColor: '#192230',
+            borderWidth: '0.2px',
+            p: 2,
+            boxShadow: '0 0 0 1px #1e293b',
+          }}
+        >
+          <Table sx={{ minWidth: 650 }} size="small" aria-label="customers table">
             <TableHead>
-              <TableRow>
+              <TableRow sx={{ borderBottom: '1px solid #1e293b' }}>
                 <TableCell sx={{ color: '#3B82F6' }}>Username</TableCell>
                 <TableCell sx={{ color: '#3B82F6' }}>Email</TableCell>
                 <TableCell sx={{ color: '#3B82F6' }}>First Name</TableCell>
@@ -57,7 +67,14 @@ const Customers = () => {
             </TableHead>
             <TableBody>
               {customers.map((customer, index) => (
-                <TableRow key={index}>
+                <TableRow
+                  key={index}
+                  sx={{
+                    '&:last-child td, &:last-child th': { border: 0 },
+                    borderBottom: '1px solid #1e293b',
+                    '&:hover': { backgroundColor: '#1e293b' },
+                  }}
+                >
                   <TableCell sx={{ color: '#f1f5f9' }}>{customer.username}</TableCell>
                   <TableCell sx={{ color: '#f1f5f9' }}>{customer.email}</TableCell>
                   <TableCell sx={{ color: '#f1f5f9' }}>{customer.lname}</TableCell>

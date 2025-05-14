@@ -18,7 +18,7 @@ const Store =
             (@store_name,@shop_no,@store_owner_username,@category)
             `)
             await pool.request().
-                input('shop_no', sql.VarChar, storeData.shopNo)
+                input('shop_no', sql.Int, storeData.shopNo)
                 .query(
                     `
                 UPDATE Shop
@@ -39,7 +39,7 @@ const Store =
             const pool = await poolPromise
 
             await pool.request().
-                input('store_id', sql.VarChar, store_id)
+                input('store_id', sql.Int, store_id)
                 .query(`
             UPDATE STORE
 			SET status='active'

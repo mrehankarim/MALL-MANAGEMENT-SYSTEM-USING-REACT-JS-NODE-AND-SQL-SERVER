@@ -18,6 +18,7 @@ import SubAdminDashboardPage from './pages/subadmin/SubAdminDashboardPage.jsx';
 import ShopsPage from './pages/subadmin/ShopsPage.jsx';
 import CustomersPage from './pages/subadmin/CustomersPage.jsx';
 import StoresPage from './pages/subadmin/StoresPage.jsx';
+import MonthlyRentsPage from './pages/subadmin/MonthlyRentsPage.jsx';
 const App=()=>{
    const theme = darkTheme;
    const router=createBrowserRouter([
@@ -72,6 +73,10 @@ const App=()=>{
     {
       path:"owner/stores",
       element:<StoresPage/>
+    },
+    {
+      path:"owner/rents",
+      element:<MonthlyRentsPage/>
     }
    ])
   return (

@@ -201,6 +201,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
     const username=req.user?.username
     const {message, rating}=req.body
+    console.log(message,rating)
 
     if([message].some((field)=>{
       field==undefined || field.trim()==""

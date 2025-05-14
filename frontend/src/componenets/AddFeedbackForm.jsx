@@ -47,6 +47,7 @@ const SubmitFeedbackForm = ({ onClose }) => {
           headers: {
             'Content-Type': 'application/json',
           },
+          withCredentials:true
         }
       );
 
