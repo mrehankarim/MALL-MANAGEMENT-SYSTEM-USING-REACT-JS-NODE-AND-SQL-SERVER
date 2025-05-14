@@ -23,6 +23,7 @@ const Stores = () => {
         const res = await axios.get('http://localhost:3000/api/v1/subscriber/stores', {
           withCredentials: true
         });
+        console.log(res.data);
         setStores(res.data.data || []);
       } catch (error) {
         console.error("Failed to fetch stores:", error);

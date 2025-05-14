@@ -55,8 +55,7 @@ const InsertRevenueForm = ({ open, onClose, title, storeId }) => {
       alert(`${title} inserted successfully!`);
       onClose();
     } catch (error) {
-      setError('Insertion failed. Please try again.');
-      console.error(error);
+      console.log('insert revenue failed', error);
     } finally {
       setLoading(false);
     }
