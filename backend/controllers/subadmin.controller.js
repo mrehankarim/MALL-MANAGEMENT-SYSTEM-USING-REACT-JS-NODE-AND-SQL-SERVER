@@ -32,6 +32,7 @@ const getAllShops=asyncHandler(async(req,res)=>{
 
 const getAllStores=asyncHandler(async(req,res)=>{
   const username=req.user?.username
+  console.log('usernameee', username);
   const stores=await Store.getStoresBySubscriber(username)
   if(!stores)
   {
@@ -238,65 +239,73 @@ const getTillDateAllExpensesOfStore=asyncHandler(async(req,res)=>{
   //get list of expenses beingpaid py store till date of month
 })
 const addShopsInBulk = asyncHandler(async (req, res) => {
-    if (!req.file) {
-      throw new apiError(400, "File is required");
-    }
-  
-    const parsedData = [];
-  
-    await new Promise((resolve, reject) => {
-      const readStream = fs.createReadStream(req.file.path);
-  
-      Papa.parse(readStream, {
-        header: true,
-        transformHeader: header => header.trim().toLowerCase(),
-        step: function (result) {
-          parsedData.push(result.data);
-        },
-        complete: function () {
-          resolve();
-        },
-        error: function (err) {
-          reject(err);
-        }
-      });
-    });
-  
-    const successList = [];
-    const failedList = [];
-  
-    for (const [index, shop] of parsedData.entries()) {
-      try {
-        if(!await Shop.createShop(
-            shop['shopno'],
-            shop.location,
-            shop.status,
-            shop.rent,
-            req.user?.username
-          ))
-          {
-            throw new Error('could not create shop')
-          }
-          successList.push({
-            index,
-            shop_no: shop.shop_no
-          })
-      } catch (err) {
-        failedList.push({
-          index,
-          shop_no: shop.shop_no,
-          error: err.message || "Unknown error"
-        });
+  if (!req.file) {
+    throw new apiError(400, "File is required");
+  }
+
+  const parsedData = [];
+
+  await new Promise((resolve, reject) => {
+    const readStream = fs.createReadStream(req.file.path); // if using diskStorage
+
+    Papa.parse(readStream, {
+      header: true,
+      transformHeader: header => header.trim().toLowerCase(),
+      step: function (result) {
+        parsedData.push(result.data);
+      },
+      complete: function () {
+        resolve();
+      },
+      error: function (err) {
+        reject(err);
       }
-    }
-  
-    res.status(207).json({
-      message: "Bulk upload completed with some results.",
-      successCount: successList.length,
-      failedCount: failedList.length,
-      failedEntries: failedList
     });
   });
+
+  const successList = [];
+  const failedList = [];
+
+  for (const [index, shop] of parsedData.entries()) {
+    try {
+      // Basic validation
+      if (!shop.shopno || !shop.location || !shop.status || !shop.rent) {
+        throw new Error("Missing required fields");
+      }
+
+      const result = await Shop.createShop(
+        shop.shopno,
+        shop.location,
+        shop.status,
+        shop.rent,
+        req.user?.username
+      );
+
+      if (!result) {
+        throw new Error('Could not create shop');
+      }
+
+      successList.push({
+        index,
+        shopno: shop.shopno
+      });
+    } catch (err) {
+      failedList.push({
+        index,
+        shopno: shop.shopno,
+        error: err.message || "Unknown error"
+      });
+    }
+  }
+
+  res.status(200).json({
+    message: "CSV processing completed",
+    successCount: successList.length,
+    failedCount: failedList.length,
+    failedList
+  });
+});
+
   
   const updateRent=asyncHandler(async (req,res)=>{
     const {shop_no,rent}=req.body
