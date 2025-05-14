@@ -18,13 +18,13 @@ const Feedback={
 
     async addingFeedback(username, message, rating) {
 
-        if (typeof rating === "string") {
-            rating = parseFloat(rating);
-        }
+        // if (typeof rating === "string") {
+        //     rating = parseFloat(rating);
+        // }
 
-        if (typeof rating !== "number" || isNaN(rating) || rating < 0.0 || rating > 5.0 || !/^\d(\.\d)?$/.test(rating.toFixed(1))) {
-            throw new Error("Invalid rating value. It must be a decimal between 0.0 and 5.0 with one decimal place.");
-        }
+        // if (typeof rating !== "number" || isNaN(rating) || rating < 0.0 || rating > 5.0 || !/^\d(\.\d)?$/.test(rating.toFixed(1))) {
+        //     throw new Error("Invalid rating value. It must be a decimal between 0.0 and 5.0 with one decimal place.");
+        // }
 
         try {
             const pool = await poolPromise;

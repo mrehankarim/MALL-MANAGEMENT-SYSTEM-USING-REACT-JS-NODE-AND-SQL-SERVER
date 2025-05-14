@@ -43,6 +43,20 @@ const Employee={
         }catch(error){
             console.log("error in getting employee by ssn: ", error);
         }
+    },
+
+    async getEmployeesBySubadmin(username){
+        try{
+            const pool=await poolPromise
+            const employees=await pool.request()
+            .input('username', sql.VarChar, username)
+            .query(`select * from EMPLOYEE
+                where subscriber=@username`)
+            return (employees.recordset)
+
+        }catch(error){
+            console.log('error in getting employees by subadmin', error);
+        }
     }
 }
 

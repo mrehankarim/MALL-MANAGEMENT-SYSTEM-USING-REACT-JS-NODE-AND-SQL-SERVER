@@ -436,19 +436,10 @@ const getEmployeesAttendance=asyncHandler(async(req, res)=>{
 const getEmployeePayrollStatus=asyncHandler(async(req, res)=>{
 
     const username=req.user?.username
-    const {date}=req.body
-
-    if (!date || isNaN(Date.parse(date))) {
-        throw new apiError(400, "Invalid date entered");
-    }
-
+   
     const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
 
-    if(date>today){
-      throw new apiError(400, "Future date can not be entered")
-    }
-
-    const payrollStatus=await Payroll.gettingEmployeePayrollStatus (username, date);
+    const payrollStatus=await Payroll.gettingEmployeePayrollStatus (username, today);
     if(!payrollStatus){
       throw new apiError(400, "Something went wrong");
     }
@@ -466,6 +457,9 @@ const getEmployeePayrollStatus=asyncHandler(async(req, res)=>{
 
 const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
 
+    const username=req.user?.username
+    const {date}=req.body
+
     const checkPayrolls=await Payroll.IsPayrollGenerated(username, date);
     if(checkPayrolls.length>0){
       throw new apiError(400, "Payrolls already generated for this month");
@@ -478,6 +472,38 @@ const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
 
     res.status(200).json(
       new apiResponse(200, generatedPayrolls, "Monthly Payrolls generated succesfully")
+    );
+})
+//@subadmin_username, @ssn int, @amount int, @method varchar(255), @type varchar(20), @date DATE
+
+const updatePayroll=asyncHandler(async(req, res)=>{
+
+    const {ssn, amount, method, type, date}=req.body
+    const subadmin_username=req.user?.username
+
+    if([method, type].some((field)=>{
+      field==undefined || field.trim()==""
+    }))
+    {
+      throw new apiError(400,"All fields are required")
+    }
+
+    if(isNaN(ssn)){
+      throw new apiError(400, "invalid ssn")
+    }
+
+    if(isNaN(amount)||amount<1){
+      throw new apiError(400, "invalid amount")
+    }
+
+    const updated=await Payroll.updatePayroll(subadmin_username, ssn, amount, method, type, date);
+
+    if(!updated){
+      throw new apiError(400, "Something went wrong")
+    }
+
+    res.status(200).json(
+      new apiResponse(200, updated, "Payroll of employee updated succesfully")
     );
 })
 
@@ -537,6 +563,20 @@ const addNewEmployee=asyncHandler(async(req, res)=>{
     );
 });
 
+const getEmployeesBySubadmin=asyncHandler(async(req, res)=>{
+
+  const username = req.user?.username
+
+  const employees=await Employee.getEmployeesBySubadmin(username);
+
+  if(!employees){
+    throw new apiError(400, "something went wrong")
+  }
+  res.status(200).json(
+      new apiResponse(200, employees, "Employees fetched by subadmin succesfully")
+    );
+})
+
 
 const attendanceRecords=[];
 
@@ -546,7 +586,7 @@ const updateAttendance=asyncHandler(async(req, res)=>{
 
   const {ssn, status, date}=req.body;
 
-  if([ssn, status, date].some((field)=>{
+  if([status].some((field)=>{
     field==undefined || field.trim()==""
   }))
   {
@@ -554,7 +594,7 @@ const updateAttendance=asyncHandler(async(req, res)=>{
   }
 
   if(isNaN(ssn)){
-    throw new apiError(400, "invlaid ssn");
+    throw new apiError(400, "invalid ssn");
   }
 
   if (!date || isNaN(Date.parse(date))) {
@@ -618,20 +658,11 @@ const saveAttendance=asyncHandler(async(req, res)=>{
 
 const generateAttendance=asyncHandler(async(req, res)=>{
 
-  const {date}=req.body
   const username=req.user?.username
-
-  if (!date || isNaN(Date.parse(date))) {
-    throw new apiError(400, "Invalid date entered");
-  }
-
+  
   const today = new Date().toISOString().split('T')[0]; 
 
-    if(date>today){
-      throw new apiError(400, "Future date can not be entered")
-    }
-
-    const generate = await Attendance.generateEmployeeAttendance(date, username);
+    const generate = await Attendance.generateEmployeeAttendance(today, username);
 
     if(!generate){
       throw new apiError(400, "something went wrong");
@@ -649,7 +680,7 @@ const getCustomers=asyncHandler(async(req,res)=>{
 
 })
 
-export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance,addNewEmployee,getCustomers}
+export {getExpensesOfMall,getTotalRevenueOfMall,getAllShops,addCustomer,addShopsInBulk,allocateShopToStore,activateStore,getAllStores,insertBill,getBillsofShop,addMonthlyRentofStore,updateRent, addFeedback, getCustomerFeedback, getEmployeesAttendance, getEmployeePayrollStatus, generateMonthlyPayroll, updateAttendance, saveAttendance, generateAttendance,addNewEmployee,getCustomers, getEmployeesBySubadmin, updatePayroll}
 
 
 //->deleteashop->it should also delete all it's asssociated data like store that was in it

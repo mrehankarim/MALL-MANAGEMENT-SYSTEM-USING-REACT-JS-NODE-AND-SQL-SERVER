@@ -1,10 +1,10 @@
  import React from 'react'
  import LayoutWrapper from '../../componenets/LayoutWrapper'
- import Customers from '../../componenets/Customers'
+ import Employee from '../../componenets/Employee'
  const CustomersPage = () => {
    return (
      <>
-       <LayoutWrapper><Customers/></LayoutWrapper>
+       <LayoutWrapper><Employee/></LayoutWrapper>
      </>
    )
  }

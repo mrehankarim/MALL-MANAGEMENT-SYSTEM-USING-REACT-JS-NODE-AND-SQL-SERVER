@@ -48,6 +48,7 @@ const InsertRevenueForm = ({ open, onClose, title, storeId }) => {
           headers: {
             Accept: 'application/json',
           },
+          withCredentials:true
         }
       );
 

@@ -200,6 +200,7 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
   const addFeedback=asyncHandler(async(req, res)=>{
 
     const username=req.user?.username
+    
     const {message, rating}=req.body
 
     if([message].some((field)=>{
@@ -274,8 +275,9 @@ const insertStoreDailyRevenue=asyncHandler(async(req,res)=>{
 
   const getShopNo_StoreIDByUsername=asyncHandler(async(req, res)=>{
 
-    const username=req.query.username
-
+    const username=req.user?.username // this is store owner's username
+    // and acc to this, we will get his subadmin's username
+    
     const shopNo_storeID=await Shop.getShopAndStoreByUsername(username)
 
     if(!shopNo_storeID){
