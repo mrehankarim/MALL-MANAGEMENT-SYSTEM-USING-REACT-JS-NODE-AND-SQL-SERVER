@@ -9,6 +9,7 @@ const AddCustomer = ({setSignUp}) => {
         email: '',
         firstName: '',
         lastName: '',
+        
         password: '',
         role:'store_owner'
     });

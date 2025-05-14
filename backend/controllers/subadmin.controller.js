@@ -466,7 +466,6 @@ const getEmployeePayrollStatus=asyncHandler(async(req, res)=>{
 
 const generateMonthlyPayroll=asyncHandler(async(req, res)=>{
 
-    
     const checkPayrolls=await Payroll.IsPayrollGenerated(username, date);
     if(checkPayrolls.length>0){
       throw new apiError(400, "Payrolls already generated for this month");
@@ -488,7 +487,7 @@ const addNewEmployee=asyncHandler(async(req, res)=>{
     const {ssn, name, email, phone, role_id, salary}=req.body
     const username = req.user?.username
 
-    if([ssn, name, email, phone, role_id, salary].some((field)=>{
+    if([name, email].some((field)=>{
       field==undefined || field.trim()==""
     }))
     {
@@ -499,7 +498,7 @@ const addNewEmployee=asyncHandler(async(req, res)=>{
       throw new apiError(400, "invalid ssn");
     }
 
-    let existing=await Employee.getEmployeeBySSN(ssn);
+    let existing = await Employee.getEmployeeBySSN(ssn);
     if(existing.length>0){
       throw new apiError(400,"ssn already exists")   
     }

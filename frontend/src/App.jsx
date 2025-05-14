@@ -18,6 +18,8 @@ import SubAdminDashboardPage from './pages/subadmin/SubAdminDashboardPage.jsx';
 import ShopsPage from './pages/subadmin/ShopsPage.jsx';
 import CustomersPage from './pages/subadmin/CustomersPage.jsx';
 import StoresPage from './pages/subadmin/StoresPage.jsx';
+import EmployeesPage from './pages/subadmin/EmployeesPage.jsx'
+
 const App=()=>{
    const theme = darkTheme;
    const router=createBrowserRouter([
@@ -72,6 +74,10 @@ const App=()=>{
     {
       path:"owner/stores",
       element:<StoresPage/>
+    },
+    {
+      path:"owner/employees",
+      element:<EmployeesPage/>
     }
    ])
   return (
