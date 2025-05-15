@@ -30,7 +30,7 @@ const Employee = () => {
                 const response = await axios.get('http://localhost:3000/api/v1/subscriber/getemployees', {
                     withCredentials: true
                 });
-                console.log('heere', response.data)
+                
                 setEmployees(response.data.data);
             } catch (error) {
                 console.error("Failed to fetch employees:", error);

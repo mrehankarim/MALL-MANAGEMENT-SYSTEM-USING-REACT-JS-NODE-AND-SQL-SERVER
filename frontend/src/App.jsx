@@ -19,6 +19,8 @@ import ShopsPage from './pages/subadmin/ShopsPage.jsx';
 import CustomersPage from './pages/subadmin/CustomersPage.jsx';
 import StoresPage from './pages/subadmin/StoresPage.jsx';
 import EmployeesPage from './pages/subadmin/EmployeesPage.jsx'
+import EmployeePayrollsPage from './pages/subadmin/EmployeePayrollsPage.jsx'
+import EmployeeAttendancePage from './pages/subadmin/EmployeeAttendancePage.jsx'
 
 const App=()=>{
    const theme = darkTheme;
@@ -78,6 +80,14 @@ const App=()=>{
     {
       path:"owner/employees",
       element:<EmployeesPage/>
+    },
+    {
+      path:"owner/employee-payrolls",
+      element:<EmployeePayrollsPage/>
+    },
+    {
+      path:"owner/employees-attendance",
+      element:<EmployeeAttendancePage/>
     }
    ])
   return (

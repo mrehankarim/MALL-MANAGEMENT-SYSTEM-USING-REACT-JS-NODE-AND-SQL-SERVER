@@ -23,7 +23,9 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import Person3Icon from '@mui/icons-material/Person3';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import axios from 'axios';
-import BadgeIcon from '@mui/icons-material/Badge'; // Add this import
+import BadgeIcon from '@mui/icons-material/Badge'; 
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import FactCheckIcon from '@mui/icons-material/FactCheck'; 
 
 const drawerWidth = 240;
 
@@ -123,6 +125,8 @@ export default function SubAdminLayout({ username, children }) {
     { label: 'store owners', path: '/owner/storeowners', icon: <Person3Icon /> },
     { label: 'stores', path: '/owner/stores', icon: <StorefrontIcon /> },
     { label: 'Employees', path: '/owner/employees', icon: <BadgeIcon /> },
+    { label: 'Employee Payrolls', path: '/owner/employee-payrolls', icon: <MonetizationOnIcon /> },
+  { label: 'Employees Attendance', path: '/owner/employees-attendance', icon: <FactCheckIcon /> },
   ];
 
   return (
