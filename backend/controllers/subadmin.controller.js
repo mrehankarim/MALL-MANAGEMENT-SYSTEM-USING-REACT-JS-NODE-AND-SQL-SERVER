@@ -406,18 +406,8 @@ const getExpensesOfMall=asyncHandler(async(req,res)=>{
 const getEmployeesAttendance=asyncHandler(async(req, res)=>{
 
   const username=req.user?.username
-    const {date}=req.body
-
-    if (!date || isNaN(Date.parse(date))) {
-      throw new apiError(400, "Invalid date entered");
-    }
-
-    const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
-
-    if(date>today){
-      throw new apiError(400, "Future date can not be entered")
-    }
-
+    const {date}=req.query
+    
     const attendance=await Attendance.getEmployeeAttendanceBySubadmin(username, date);
     if(!attendance){
       throw new apiError(400, "Something went wrong");
@@ -631,7 +621,7 @@ const updateAttendance=asyncHandler(async(req, res)=>{
       });
   }
 
-  //console.log(attendanceRecords);
+  // console.log(attendanceRecords);
 
   res.status(200).json(
     new apiResponse(200, "Employee attendance added in array successfully")
@@ -661,6 +651,11 @@ const generateAttendance=asyncHandler(async(req, res)=>{
   const username=req.user?.username
   
   const today = new Date().toISOString().split('T')[0]; 
+
+  const isgenerate=await Attendance.getEmployeeAttendanceBySubadmin(username, today);
+  if(isgenerate.length>0){
+    throw new apiError(200, "attendance already generated for today");
+  }
 
     const generate = await Attendance.generateEmployeeAttendance(today, username);
 
