@@ -22,6 +22,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import { NavLink, useNavigate } from 'react-router-dom';
 import Person3Icon from '@mui/icons-material/Person3';
 import StorefrontIcon from '@mui/icons-material/Storefront';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import axios from 'axios';
 import BadgeIcon from '@mui/icons-material/Badge'; 
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
@@ -127,6 +128,7 @@ export default function SubAdminLayout({ username, children }) {
     { label: 'Employees', path: '/owner/employees', icon: <BadgeIcon /> },
     { label: 'Employee Payrolls', path: '/owner/employee-payrolls', icon: <MonetizationOnIcon /> },
   { label: 'Employees Attendance', path: '/owner/employees-attendance', icon: <FactCheckIcon /> },
+    { label: 'rents', path: '/owner/rents', icon: <AttachMoneyIcon /> },
   ];
 
   return (

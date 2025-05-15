@@ -5,6 +5,7 @@ import dotenv from "dotenv"
 dotenv.config()
 
 const verifyCustomer=asyncHandler(async(req,res,next)=>{
+    console.log("customer hit")
     if(req.user.role=="store_owner")
     {
         next()

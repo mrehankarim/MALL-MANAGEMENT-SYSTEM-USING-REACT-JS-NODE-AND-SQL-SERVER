@@ -18,6 +18,7 @@ import SubAdminDashboardPage from './pages/subadmin/SubAdminDashboardPage.jsx';
 import ShopsPage from './pages/subadmin/ShopsPage.jsx';
 import CustomersPage from './pages/subadmin/CustomersPage.jsx';
 import StoresPage from './pages/subadmin/StoresPage.jsx';
+import MonthlyRentsPage from './pages/subadmin/MonthlyRentsPage.jsx';
 import EmployeesPage from './pages/subadmin/EmployeesPage.jsx'
 import EmployeePayrollsPage from './pages/subadmin/EmployeePayrollsPage.jsx'
 import EmployeeAttendancePage from './pages/subadmin/EmployeeAttendancePage.jsx'
@@ -76,6 +77,10 @@ const App=()=>{
     {
       path:"owner/stores",
       element:<StoresPage/>
+    },
+    {
+      path:"owner/rents",
+      element:<MonthlyRentsPage/>
     },
     {
       path:"owner/employees",
