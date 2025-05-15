@@ -8,7 +8,6 @@ const verifySubAdmin=asyncHandler(async(req,res,next)=>{
     
     if(req.user?.role=="subscriber")
     {
-        console.log("netx")
         next()
     }
     else

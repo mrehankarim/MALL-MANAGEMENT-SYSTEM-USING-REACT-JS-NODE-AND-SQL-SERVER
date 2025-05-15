@@ -38,7 +38,7 @@ const Attendance={
             const pool = await poolPromise;
             for (const record of records) {
                 await pool.request()
-                    .input('emp_ssn', sql.VarChar, record.ssn)
+                    .input('emp_ssn', sql.Int, record.ssn)
                     .input('status', sql.VarChar, record.status)
                     .input('date', sql.Date, record.date)
                     .execute('SetAttendance'); 

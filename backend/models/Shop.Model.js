@@ -80,28 +80,23 @@ const Shop = {
     },
 
     async getShopAndStoreByUsername(username) {
-        try {
+    try {
             const pool = await poolPromise;
 
             const shopResult = await pool.request()
-            .input('username', sql.VarChar, username)
-            .query(`
-                SELECT shop_no
-                FROM Shop
-                WHERE shopowner = @username
-            `);
+                .input('username', sql.VarChar, username)
+                .query(`
+                    SELECT shop_no, store_id
+                    FROM STORE
+                    WHERE store_owner_username = @username
+                `);
 
+            if (!shopResult.recordset.length) {
+                throw new Error('No shop found for this username');
+            }
+            
             const shopNo = shopResult.recordset[0].shop_no;
-
-            const storeResult = await pool.request()
-            .input('shop_no', sql.Int, shopNo)
-            .query(`
-                SELECT store_id
-                FROM Store
-                WHERE shop_no = @shop_no
-            `);
-
-            const storeId = storeResult.recordset[0].store_id;
+            const storeId = shopResult.recordset[0].store_id;
             return { shop_no: shopNo, store_id: storeId };
 
         } catch (error) {

@@ -8,10 +8,16 @@ import OwnerExpenseCard from './OwnerExpenseCard';
 import OwnerAddFeedbackForm from './OwnerAddFeedbackForm';
 import axios from 'axios';
 
+import AddEmployee from './AddEmployee'
+import GeneratePayroll from './GeneratePayroll'
+
 const OwnerDashboard = () => {
   const [signup, setSignup] = useState(false);
   const [revenue, setRevenue] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [showAddShops, setShowAddShops] = useState(false)
+  const [showAddEmployee, setShowAddEmployee] = useState(false)
+  const [showPayroll, setShowPayroll] = useState(false)
 
   const generateMonthlyRent = async () => {
     try {
@@ -26,6 +32,7 @@ const OwnerDashboard = () => {
       alert("Rent generation failed");
     }
   };
+  
 
   return (
     <>
@@ -83,6 +90,26 @@ const OwnerDashboard = () => {
           </Box>
         </Box>
       )}
+      <Button variant='outlined' onClick={() => setSignup(prev => !prev)}>Add customer</Button>
+      {signup && (<AddCustomer setSignUp={setSignup} />)}
+
+      <Button variant='outlined' onClick={() => setShowAddShops(true)}>Add Shops in Bulk</Button>
+      {showAddShops && <AddShops open={showAddShops} onClose={() => setShowAddShops(false)} />}
+
+      <Button variant='outlined' onClick={() => setSignup(prev => !prev)}>Allocate Shop</Button>
+      {signup && (<AddCustomer setSignUp={setSignup} />)}
+
+      <Button variant='outlined' onClick={() => setSignup(prev => !prev)}>Add Shop Bill</Button>
+      {signup && (<AddCustomer setSignUp={setSignup} />)}
+
+      <Button variant='outlined' onClick={() => setSignup(prev => !prev)}>Add Shop Rent</Button>
+      {signup && (<AddCustomer setSignUp={setSignup} />)}
+
+      <Button variant='outlined' onClick={() => setShowAddEmployee(true)}>Add Employee</Button>
+      {showAddEmployee && <AddEmployee setAddEmployee={setShowAddEmployee} />}
+
+      <Button variant='outlined' onClick={() => setShowPayroll(true)}>Generate Employees Payroll</Button>
+      {showPayroll && <GeneratePayroll open={showPayroll} onClose={() => setShowPayroll(false)} />}
     </>
   );
 };
