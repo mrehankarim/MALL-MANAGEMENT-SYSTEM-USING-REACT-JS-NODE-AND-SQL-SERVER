@@ -123,12 +123,12 @@ export default function SubAdminLayout({ username, children }) {
   const navItems = [
     { label: 'Dashboard', path: '/owner/dashboard', icon: <HomeOutlinedIcon /> },
     { label: 'Shops', path: '/owner/shops', icon: <InventoryIcon /> },
-    { label: 'store owners', path: '/owner/storeowners', icon: <Person3Icon /> },
-    { label: 'stores', path: '/owner/stores', icon: <StorefrontIcon /> },
+    { label: 'Store Owners', path: '/owner/storeowners', icon: <Person3Icon /> },
+    { label: 'Stores', path: '/owner/stores', icon: <StorefrontIcon /> },
     { label: 'Employees', path: '/owner/employees', icon: <BadgeIcon /> },
     { label: 'Employee Payrolls', path: '/owner/employee-payrolls', icon: <MonetizationOnIcon /> },
   { label: 'Employees Attendance', path: '/owner/employees-attendance', icon: <FactCheckIcon /> },
-    { label: 'rents', path: '/owner/rents', icon: <AttachMoneyIcon /> },
+    { label: 'Rents', path: '/owner/rents', icon: <AttachMoneyIcon /> },
   ];
 
   return (

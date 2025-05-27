@@ -6,6 +6,7 @@ import InsertBill from './InsertBIll';
 import OwnerRevenueCard from './OwnerRevenueCard';
 import OwnerExpenseCard from './OwnerExpenseCard';
 import OwnerAddFeedbackForm from './OwnerAddFeedbackForm';
+import AddShops from "../componenets/AddShops"
 import axios from 'axios';
 
 import AddEmployee from './AddEmployee'
@@ -41,7 +42,7 @@ const OwnerDashboard = () => {
           Add Customer
         </Button>
         <Button variant="outlined" onClick={() => setRevenue(prev => !prev)}>
-          Add Revenue
+          Insert Bill
         </Button>
         <Button variant="outlined" onClick={generateMonthlyRent}>
           Generate Rent
@@ -90,26 +91,17 @@ const OwnerDashboard = () => {
           </Box>
         </Box>
       )}
-      <Button variant='outlined' onClick={() => setSignup(prev => !prev)}>Add customer</Button>
-      {signup && (<AddCustomer setSignUp={setSignup} />)}
+      <br />
+      <Box sx={{display:"flex",gap:"10px"}}>
 
       <Button variant='outlined' onClick={() => setShowAddShops(true)}>Add Shops in Bulk</Button>
       {showAddShops && <AddShops open={showAddShops} onClose={() => setShowAddShops(false)} />}
-
-      <Button variant='outlined' onClick={() => setSignup(prev => !prev)}>Allocate Shop</Button>
-      {signup && (<AddCustomer setSignUp={setSignup} />)}
-
-      <Button variant='outlined' onClick={() => setSignup(prev => !prev)}>Add Shop Bill</Button>
-      {signup && (<AddCustomer setSignUp={setSignup} />)}
-
-      <Button variant='outlined' onClick={() => setSignup(prev => !prev)}>Add Shop Rent</Button>
-      {signup && (<AddCustomer setSignUp={setSignup} />)}
-
       <Button variant='outlined' onClick={() => setShowAddEmployee(true)}>Add Employee</Button>
       {showAddEmployee && <AddEmployee setAddEmployee={setShowAddEmployee} />}
 
       <Button variant='outlined' onClick={() => setShowPayroll(true)}>Generate Employees Payroll</Button>
       {showPayroll && <GeneratePayroll open={showPayroll} onClose={() => setShowPayroll(false)} />}
+        </Box>
     </>
   );
 };

@@ -12,10 +12,14 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { fetchUser } from '../redux/userSlice/userSlice';
 
 const Login = ({ setLogin }) => {
   const navigate = useNavigate();
   const theme = useTheme();
+  const dispatch = useDispatch();
+  
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -37,14 +41,28 @@ const Login = ({ setLogin }) => {
         'http://localhost:3000/api/v1/user/login',
         formData,
         {
-          headers: {
-            'Accept': 'application/json',
-          },
+          headers: { 'Accept': 'application/json' },
           withCredentials: true,
         }
       );
-      setLogin(prev => !prev);
-      navigate('/admin/dashboard');
+
+      const role = response?.data?.data?.user?.role;
+      if (!role) throw new Error('No role found in response');
+
+      // Optional: re-fetch user to update global state
+      dispatch(fetchUser());
+
+      setLogin(false);
+
+      if (role === 'admin') {
+        navigate('/admin/dashboard');
+      } else if (role === 'subscriber') {
+        navigate('/owner/dashboard');
+      } else if (role === 'store_owner') {
+        navigate('/customer/dashboard');
+      } else {
+        setError('Unknown role. Please contact support.');
+      }
     } catch (error) {
       setError('Login failed. Please check your credentials and try again.');
       console.error(error);
@@ -56,7 +74,7 @@ const Login = ({ setLogin }) => {
   return (
     <>
       <Box
-        onClick={() => setLogin(prev => !prev)}
+        onClick={() => setLogin(false)}
         sx={{
           position: 'fixed',
           top: 0,
@@ -97,7 +115,7 @@ const Login = ({ setLogin }) => {
           }}
         >
           <IconButton
-            onClick={() => setLogin(prev => !prev)}
+            onClick={() => setLogin(false)}
             sx={{ position: 'absolute', top: 8, right: 8 }}
           >
             <CloseIcon />

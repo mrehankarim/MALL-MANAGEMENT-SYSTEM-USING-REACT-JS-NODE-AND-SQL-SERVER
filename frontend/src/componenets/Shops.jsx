@@ -24,7 +24,7 @@ const modalStyle = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 600,
     bgcolor: '#0f172a',
     border: '2px solid #3B82F6',
     boxShadow: 24,
@@ -63,7 +63,10 @@ const Shops = () => {
         fetchData();
     }, []);
 
-    const handleOpen = () => setOpen(true);
+    const handleOpen = (shopNo) => {
+        setFormData(prev => ({ ...prev, shopNo }));
+        setOpen(true);
+    };
 
     const handleClose = () => {
         setOpen(false);
@@ -105,7 +108,7 @@ const Shops = () => {
     const handleViewBills = async (shopNo) => {
         try {
             const res = await axios.get(`http://localhost:3000/api/v1/subscriber/bills/?shop_no=${shopNo}`, { withCredentials: true });
-            setBills(res.data.data);
+            setBills(res.data.data || []);
             setSelectedShop(shopNo);
             setBillsModalOpen(true);
         } catch (error) {
@@ -120,12 +123,11 @@ const Shops = () => {
         setSelectedShop(null);
     };
 
-    const vacantShops = shops.filter(shop => shop.status === 'vacant');
-
     const filteredShops = shops.filter(shop => {
-        const matchesSearch = shop.shop_no.toString().includes(searchTerm) ||
-                              shop.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                              (shop.shopowner && shop.shopowner.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesSearch =
+            shop.shop_no.toString().includes(searchTerm) ||
+            shop.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (shop.shopowner && shop.shopowner.toLowerCase().includes(searchTerm.toLowerCase()));
         const matchesStatus = statusFilter ? shop.status === statusFilter : true;
         return matchesSearch && matchesStatus;
     });
@@ -142,7 +144,7 @@ const Shops = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     variant="outlined"
-                    sx={{ input: { color: '#f1f5f9' }, label: { color: '#94a3b8' } }}
+                    sx={{ input: { color: '#f1f5f9' } }}
                 />
                 <FormControl sx={{ minWidth: 120 }}>
                     <InputLabel sx={{ color: '#94a3b8' }}>Status</InputLabel>
@@ -178,11 +180,11 @@ const Shops = () => {
                                 <TableCell sx={{ color: shop.status === 'vacant' ? '#f87171' : '#34d399' }}>
                                     {shop.status.charAt(0).toUpperCase() + shop.status.slice(1)}
                                 </TableCell>
-                                <TableCell sx={{ color: '#f1f5f9' }}>{shop.shopowner}</TableCell>
-                                <TableCell sx={{ color: '#f1f5f9' }}>{shop.rent_amount.toLocaleString()}</TableCell>
+                                <TableCell sx={{ color: '#f1f5f9' }}>{shop.shopowner || '-'}</TableCell>
+                                <TableCell sx={{ color: '#f1f5f9' }}>{shop.rent_amount?.toLocaleString() || '-'}</TableCell>
                                 <TableCell>
                                     {shop.status === 'vacant' ? (
-                                        <Button variant="contained" color="primary" onClick={handleOpen}>
+                                        <Button variant="contained" color="primary" onClick={() => handleOpen(shop.shop_no)}>
                                             Allocate
                                         </Button>
                                     ) : (
@@ -196,6 +198,87 @@ const Shops = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {/* Allocation Modal */}
+            <Modal open={open} onClose={handleClose}>
+                <Box sx={modalStyle}>
+                    <Typography variant="h6" color="#f1f5f9" mb={2}>Allocate Shop</Typography>
+                    <TextField
+                        fullWidth
+                        name="storeName"
+                        label="Store Name"
+                        value={formData.storeName}
+                        onChange={handleChange}
+                        sx={{ mb: 2, input: { color: '#f1f5f9' }, label: { color: '#94a3b8' } }}
+                    />
+                    <TextField
+                        fullWidth
+                        label="Shop No"
+                        value={formData.shopNo}
+                        disabled
+                        sx={{ mb: 2, input: { color: '#f1f5f9' }, label: { color: '#94a3b8' } }}
+                    />
+                    <FormControl fullWidth sx={{ mb: 2 }}>
+                        <InputLabel sx={{ color: '#94a3b8' }}>Owner Username</InputLabel>
+                        <Select
+                            name="ownerUsername"
+                            value={formData.ownerUsername}
+                            onChange={handleChange}
+                            sx={{ color: '#f1f5f9' }}
+                        >
+                            {customers.map(username => (
+                                <MenuItem key={username} value={username}>{username}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        fullWidth
+                        name="category"
+                        label="Category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        sx={{ mb: 2, input: { color: '#f1f5f9' }, label: { color: '#94a3b8' } }}
+                    />
+                    <Button variant="contained" fullWidth color="primary" onClick={handleSubmit}>Allocate</Button>
+                </Box>
+            </Modal>
+
+            {/* Bills Modal */}
+            <Modal open={billsModalOpen} onClose={handleCloseBillsModal}>
+                <Box sx={{ ...modalStyle, width: 700 }}>
+                    <Typography variant="h6" color="#f1f5f9" mb={2}>
+                        Bills for Shop #{selectedShop}
+                    </Typography>
+                    {bills.length === 0 ? (
+                        <Typography color="#f1f5f9">No bills found.</Typography>
+                    ) : (
+                        <TableContainer component={Paper} sx={{ backgroundColor: "#020317" }}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={{ color: '#3B82F6' }}>Month</TableCell>
+                                        <TableCell sx={{ color: '#3B82F6' }}>Type</TableCell>
+                                        <TableCell sx={{ color: '#3B82F6' }}>Amount (PKR)</TableCell>
+                                        <TableCell sx={{ color: '#3B82F6' }}>Status</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {bills.map((bill) => (
+                                        <TableRow key={bill.bill_id}>
+                                            <TableCell sx={{ color: '#f1f5f9' }}>{new Date(bill.month_year).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</TableCell>
+                                            <TableCell sx={{ color: '#f1f5f9' }}>{bill.type}</TableCell>
+                                            <TableCell sx={{ color: '#f1f5f9' }}>{bill.amount.toLocaleString()}</TableCell>
+                                            <TableCell sx={{ color: bill.status === 'pending' ? '#f87171' : '#34d399' }}>
+                                                {bill.status}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
+                </Box>
+            </Modal>
         </Box>
     );
 };
