@@ -61,7 +61,7 @@ The Shopping Mall Management System is designed to help mall administrators stre
 
 ## 🖼️ System Design
 
-![System Design](./A_README_document_for_a_Shopping_Mall_Management_S.png)
+![System Design](./readme.png)
 
 ---
 
