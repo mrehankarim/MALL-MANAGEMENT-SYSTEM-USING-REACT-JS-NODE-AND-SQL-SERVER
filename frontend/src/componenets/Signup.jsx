@@ -11,7 +11,7 @@ const Signup = ({ setSignUp }) => {
         firstName: '',
         lastName: '',
         password: '',
-        role:'admin'
+        role:'subscriber'
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);

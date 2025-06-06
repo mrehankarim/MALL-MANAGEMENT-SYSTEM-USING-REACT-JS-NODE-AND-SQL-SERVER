@@ -23,7 +23,9 @@ import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined'
 import StoreOutlinedIcon from '@mui/icons-material/StoreOutlined'
 import ReceiptOutlinedIcon from '@mui/icons-material/ReceiptOutlined'
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined'
+import { Button } from '@mui/material';
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -115,7 +117,22 @@ export default function AdminLayout({ username, children }) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+  const handleLogout = async () => {
+  try {
+    const response = await axios.post('http://localhost:3000/api/v1/user/logout', {}, { withCredentials: true });
 
+    if (response.status === 200) {
+      navigate('/');
+    } else {
+      alert('Something went wrong');
+    }
+  } catch (error) {
+    console.error('Logout error:', error);
+    alert('Something went wrong');
+  }
+};
+
+  
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -141,13 +158,18 @@ export default function AdminLayout({ username, children }) {
               Mall Matrix
             </Typography>
           </Box>
-          <Box>
+          <Box sx={{display:"flex",gap:"10px"}}>
+            <Box >
+              <Button variant="outlined" onClick={handleLogout}>Logout</Button>
+            </Box>
+            <Box>
             <Typography variant="p" component="div">
               {username}
             </Typography>
             <Typography variant="p" component="div" sx={{ fontSize: "10px" }}>
               Customer
             </Typography>
+          </Box>
           </Box>
         </Toolbar>
         <Divider />
