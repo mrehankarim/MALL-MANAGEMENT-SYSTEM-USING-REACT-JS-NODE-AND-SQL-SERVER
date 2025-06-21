@@ -59,7 +59,12 @@ const EmployeeAttendance = () => {
                     withCredentials: true
                 }
             );
-            setAttendance(response.data.data || []);
+            // Format date to remove time
+            const formattedData = response.data.data?.map(item => ({
+                ...item,
+                date: item.date.split('T')[0] // Keep only the date part
+            })) || [];
+            setAttendance(formattedData);
             setShowTable(true);
         } catch (err) {
             setError('Failed to fetch attendance.');
@@ -114,8 +119,8 @@ const EmployeeAttendance = () => {
     };
 
     return (
-        <Box sx={{ mt: 4 }}>
-            <Typography variant="h6" sx={{ color: '#f1f5f9', mb: 2 }}>
+        <Box sx={{ mt: 4, p: 2, backgroundColor: '#0f172a', borderRadius: 2 }}>
+            <Typography variant="h6" sx={{ color: '#f1f5f9', mb: 2, fontWeight: 600 }}>
                 Employee Attendance
             </Typography>
             <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
@@ -124,6 +129,11 @@ const EmployeeAttendance = () => {
                     color="primary"
                     onClick={handleGenerateAttendance}
                     disabled={loading}
+                    sx={{
+                        textTransform: 'none',
+                        px: 3,
+                        fontWeight: 500
+                    }}
                 >
                     {loading ? <CircularProgress size={20} color="inherit" /> : 'Generate Attendance'}
                 </Button>
@@ -132,6 +142,16 @@ const EmployeeAttendance = () => {
                     color="secondary"
                     onClick={() => setShowDateDialog(true)}
                     disabled={loading}
+                    sx={{
+                        textTransform: 'none',
+                        px: 3,
+                        fontWeight: 500,
+                        borderColor: '#3B82F6',
+                        color: '#3B82F6',
+                        '&:hover': {
+                            borderColor: '#60A5FA'
+                        }
+                    }}
                 >
                     Get Attendance
                 </Button>
@@ -144,22 +164,42 @@ const EmployeeAttendance = () => {
             )}
 
             <Dialog open={showDateDialog} onClose={() => setShowDateDialog(false)}>
-                <DialogTitle>Enter Date</DialogTitle>
-                <DialogContent>
+                <DialogTitle sx={{ backgroundColor: '#0f172a', color: '#f1f5f9' }}>
+                    Select Date
+                </DialogTitle>
+                <DialogContent sx={{ backgroundColor: '#0f172a', pt: 2 }}>
                     <TextField
                         type="date"
                         value={dateInput}
                         onChange={e => setDateInput(e.target.value)}
                         fullWidth
                         InputLabelProps={{ shrink: true }}
+                        InputProps={{
+                            sx: {
+                                color: '#f1f5f9',
+                                '& .MuiOutlinedInput-notchedOutline': {
+                                    borderColor: '#3B82F6'
+                                }
+                            }
+                        }}
                     />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setShowDateDialog(false)}>Cancel</Button>
+                <DialogActions sx={{ backgroundColor: '#0f172a' }}>
+                    <Button 
+                        onClick={() => setShowDateDialog(false)}
+                        sx={{ color: '#f1f5f9' }}
+                    >
+                        Cancel
+                    </Button>
                     <Button
                         onClick={handleGetAttendance}
                         disabled={!dateInput || loading}
                         variant="contained"
+                        sx={{
+                            backgroundColor: '#3B82F6',
+                            '&:hover': { backgroundColor: '#2563EB' },
+                            textTransform: 'none'
+                        }}
                     >
                         {loading ? <CircularProgress size={20} color="inherit" /> : 'Get'}
                     </Button>
@@ -169,10 +209,10 @@ const EmployeeAttendance = () => {
             {showTable && (
                 <>
                     <TableContainer component={Paper} sx={{
-                        backgroundColor: "#020317",
+                        backgroundColor: "#1e293b",
                         color: '#f1f5f9',
                         borderRadius: '8px',
-                        border: '1px solid #1e293b',
+                        border: '1px solid #334155',
                         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
                         mt: 3
                     }}>
@@ -188,7 +228,7 @@ const EmployeeAttendance = () => {
                             </TableHead>
                             <TableBody>
                                 {attendance.map((row, idx) => (
-                                    <TableRow key={idx}>
+                                    <TableRow key={idx} sx={{ '&:hover': { backgroundColor: '#334155' } }}>
                                         <TableCell sx={{ color: '#e2e8f0' }}>{row.ssn}</TableCell>
                                         <TableCell sx={{ color: '#e2e8f0' }}>{row.name}</TableCell>
                                         <TableCell sx={{ color: '#e2e8f0' }}>{row.date}</TableCell>
@@ -204,27 +244,37 @@ const EmployeeAttendance = () => {
                                         <TableCell>
                                             <Box sx={{ display: 'flex', gap: 1 }}>
                                                 <Button
-                                                    variant="contained"
+                                                    variant={row.status === 'present' ? 'contained' : 'outlined'}
                                                     size="small"
                                                     onClick={() => handleMarkAttendance(row.ssn, 'present')}
                                                     disabled={loading}
                                                     sx={{
-                                                        backgroundColor: '#10b981',
-                                                        '&:hover': { backgroundColor: '#059669' },
-                                                        textTransform: 'none'
+                                                        backgroundColor: row.status === 'present' ? '#10b981' : 'transparent',
+                                                        color: row.status === 'present' ? 'white' : '#10b981',
+                                                        borderColor: '#10b981',
+                                                        '&:hover': { 
+                                                            backgroundColor: row.status === 'present' ? '#059669' : 'rgba(16, 185, 129, 0.1)' 
+                                                        },
+                                                        textTransform: 'none',
+                                                        minWidth: 80
                                                     }}
                                                 >
                                                     Present
                                                 </Button>
                                                 <Button
-                                                    variant="contained"
+                                                    variant={row.status === 'absent' ? 'contained' : 'outlined'}
                                                     size="small"
                                                     onClick={() => handleMarkAttendance(row.ssn, 'absent')}
                                                     disabled={loading}
                                                     sx={{
-                                                        backgroundColor: '#ef4444',
-                                                        '&:hover': { backgroundColor: '#dc2626' },
-                                                        textTransform: 'none'
+                                                        backgroundColor: row.status === 'absent' ? '#ef4444' : 'transparent',
+                                                        color: row.status === 'absent' ? 'white' : '#ef4444',
+                                                        borderColor: '#ef4444',
+                                                        '&:hover': { 
+                                                            backgroundColor: row.status === 'absent' ? '#dc2626' : 'rgba(239, 68, 68, 0.1)' 
+                                                        },
+                                                        textTransform: 'none',
+                                                        minWidth: 80
                                                     }}
                                                 >
                                                     Absent
@@ -245,7 +295,8 @@ const EmployeeAttendance = () => {
                                 backgroundColor: '#3B82F6',
                                 '&:hover': { backgroundColor: '#2563EB' },
                                 textTransform: 'none',
-                                px: 3
+                                px: 3,
+                                fontWeight: 500
                             }}
                         >
                             {loading ? <CircularProgress size={20} color="inherit" /> : 'Save Attendance'}

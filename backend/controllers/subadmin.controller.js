@@ -143,23 +143,41 @@ const inserBillsInBulk = asyncHandler(async (req, res) => {
 
 const insertBill = asyncHandler(async (req, res) => {
   //insert a bill for store
-  const { shop_no, type, amount, month_year } = req.body
+  let { shop_no, type, amount, month_year } = req.body
   console.log(shop_no, type, amount, month_year)
 
-  if ([shop_no, type, amount, month_year].some(field =>
-    field === undefined || field === null || String(field).trim() === ""
-  )) {
-    throw new apiError(400, "All fields are required");
-  }
-
-
-  if (!await Shop.MatchShopAndSubadmin(shop_no, req.user?.username)) {
-    throw new apiError(400, "Invalid shop Number")
-  }
-
-  if (!await Bill.InsertBill(shop_no, type, amount, month_year)) {
-    throw new apiError(500, "Something went wrong while inserting bill")
-  }
+  // Format month_year to YYYY/MM/DD
+    if (month_year) {
+        // Accepts YYYY-MM-DD or YYYY-MM or MM/YYYY or similar
+        let dateObj;
+        if (/^\d{4}-\d{2}-\d{2}$/.test(month_year)) {
+            // If format is YYYY-MM-DD
+            dateObj = new Date(month_year);
+        } else if (/^\d{4}-\d{2}$/.test(month_year)) {
+            // If format is YYYY-MM
+            dateObj = new Date(month_year + '-01');
+        } else if (/^\d{2}\/\d{4}$/.test(month_year)) {
+            // If format is MM/YYYY
+            const [mm, yyyy] = month_year.split('/');
+            dateObj = new Date(`${yyyy}-${mm}-01`);
+        } else {
+            dateObj = new Date(month_year);
+        }
+        // Format as YYYY/MM/DD
+        const yyyy = dateObj.getFullYear();
+        const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const dd = String(dateObj.getDate()).padStart(2, '0');
+        month_year = `${yyyy}/${mm}/${dd}`;
+    }
+    
+    
+    if (!await Shop.MatchShopAndSubadmin(shop_no, req.user?.username)) {
+      throw new apiError(400, "Invalid shop Number")
+    }
+    console.log("atleast here")
+    if (!await Bill.InsertBill(shop_no, type, amount, month_year)) {
+      throw new apiError(500, "Something went wrong while inserting bill")
+    }
   res.status(200).json(
     new apiResponse(200, {}, "Bill inserted successfully")
   )
@@ -298,6 +316,7 @@ const updateRent = asyncHandler(async (req, res) => {
 const getTotalRevenueOfMall = asyncHandler(async (req, res) => {
   const username = req.user?.username;
   const date = req.query.date;
+  
   if (!date) {
     throw new apiError(400, "Date is required");
   }
