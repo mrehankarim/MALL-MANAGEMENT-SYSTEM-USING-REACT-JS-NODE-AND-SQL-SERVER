@@ -26,7 +26,7 @@ import Layout from './componenets/Layout.jsx'; // We'll create this next
 import { ThemeContext } from './context/ThemeContext'; // Not '../context'
 
 const App = () => {
-  const [mode, setMode] = useState('light');
+  const [mode, setMode] = useState('dark');
   
   const colorMode = useMemo(() => ({
     toggleColorMode: () => {

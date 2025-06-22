@@ -33,7 +33,7 @@ const Hero = () => {
                     textAlign: "center",
                     lineHeight: 1.2
                     }}>
-                    Get your mall managed <br /> <Box component="span" sx={{ color: 'primary.main' }}>MallMatrix</Box>
+                    Get your mall managed by<br /> <Box component="span" sx={{ color: 'primary.main' }}>MallMatrix</Box>
                     </Typography>
                     <Typography variant="body1" sx={{ 
                     textAlign: "center", 

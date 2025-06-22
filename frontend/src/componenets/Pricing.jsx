@@ -62,7 +62,7 @@ const Pricing = () => {
                     Perfect for small to mid-sized malls
                 </Typography>
                 <Typography variant="h3" sx={{ fontWeight: 700, color: "primary.main", my: 1 }}>
-                    $49/mo
+                    $150,000 / mo
                 </Typography>
                 <Box sx={{ 
                     textAlign: "center", 
