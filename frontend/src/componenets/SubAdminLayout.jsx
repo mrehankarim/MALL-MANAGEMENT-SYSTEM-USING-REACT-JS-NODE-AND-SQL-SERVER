@@ -152,7 +152,23 @@ export default function SubAdminLayout({ username, children }) {
           </Box>
           <Box sx={{ display: 'flex', gap: '14px' }}>
             <Box sx={{ border: '1px solid #3B82F6', borderRadius: '4px' }}>
-              <Button onClick={logOut}>Logout</Button>
+              <Button 
+                onClick={logOut}
+                variant="outlined"
+                sx={{
+                  borderColor: theme.palette.primary.main,
+                  color: theme.palette.mode === 'dark' ? 
+                    theme.palette.primary.contrastText : 
+                    theme.palette.primary.main,
+                  '&:hover': {
+                    backgroundColor: theme.palette.primary.main,
+                    color: theme.palette.primary.contrastText,
+                    borderColor: theme.palette.primary.main
+                  }
+                }}
+              >
+                Logout
+              </Button>
             </Box>
             <Box>
               <Typography variant="body2">{username}</Typography>
