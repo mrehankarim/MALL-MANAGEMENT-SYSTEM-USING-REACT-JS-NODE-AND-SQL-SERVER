@@ -17,7 +17,6 @@ const Subscription={
     {
         try {
             const pool=await poolPromise
-
            const result=await pool.request()
             .execute('getAllSubscription')
             return result.recordset

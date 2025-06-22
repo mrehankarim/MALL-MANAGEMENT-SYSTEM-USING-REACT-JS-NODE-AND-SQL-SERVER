@@ -1,7 +1,18 @@
 import React, { useState } from 'react';
-import { Card, CardContent, Typography, Button } from '@mui/material';
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Button,
+  Box,
+  Chip
+} from '@mui/material';
+import { 
+  Payments as PaymentsIcon,
+  Receipt as BillIcon
+} from '@mui/icons-material';
 import RentPaymentForm from './RentPaymentForm';
-import BillPaymentForm from './BillPaymentForm'; 
+import BillPaymentForm from './BillPaymentForm';
 
 const PendingAmountCard = ({ title, value, shopNo }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -10,39 +21,67 @@ const PendingAmountCard = ({ title, value, shopNo }) => {
     <>
       <Card
         sx={{
-          borderRadius: '9px',
-          borderWidth: '2px',
-          borderColor: '#1e0039',
-          backgroundColor: '#020317', // Very dark blue
-          color: '#f1f5f9',
-          width: '80%',
-          maxWidth: 210,
+          borderRadius: '12px',
+          backgroundColor: '#0f172a',
+          color: '#f8fafc',
+          width: '100%',
+          maxWidth: 240,
           height: 200,
-          marginLeft: 5,
           p: 2,
-          boxShadow: '0 0 0 1px #1e293b',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          borderLeft: `4px solid ${title === 'Pending Rent' ? '#3b82f6' : '#10b981'}`,
+          transition: 'transform 0.3s, box-shadow 0.3s',
+          '&:hover': {
+            transform: 'translateY(-4px)',
+            boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)'
+          }
         }}
       >
-        <CardContent>
-          <Typography
-            variant="subtitle2"
-            sx={{ color: '#94a3b8', fontSize: '0.85rem', mb: 0.5, fontWeight: 'bold' }}
+        <CardContent sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+            {title === 'Pending Rent' ? (
+              <PaymentsIcon color="primary" fontSize="small" />
+            ) : (
+              <BillIcon color="success" fontSize="small" />
+            )}
+            <Typography
+              variant="subtitle2"
+              sx={{ 
+                color: '#94a3b8', 
+                fontSize: '1 rem', 
+                fontWeight: 600 
+              }}
+            >
+              {title}
+            </Typography>
+          </Box>
+
+          <Typography 
+            variant="h5" 
+            sx={{ 
+              fontWeight: 50, 
+              my: 'auto',
+              color: value > 0 ? '#f8fafc' : '#FFFFFF'
+            }}
           >
-            {title}
+            {value > 0 ? `$${value}` : 'No pending amount'}
           </Typography>
-          <Typography variant="h5" sx={{ fontWeight: 'normal', fontSize: '1.8rem', mb: 0.5 }}>
-            {value > 0 ? `$${value}` : 'Nothing is pending'}
-          </Typography>
+
           {value > 0 && (
             <Button
               variant="contained"
+              startIcon={title === 'Pending Rent' ? <PaymentsIcon /> : <BillIcon />}
               sx={{
-                mt: 2,
-                backgroundColor: '#3b82f6',
-                color: '#f1f5f9',
-                '&:hover': { backgroundColor: '#2563eb' },
+                mt: 'auto',
+                backgroundColor: title === 'Pending Rent' ? '#3b82f6' : '#10b981',
+                color: '#f8fafc',
+                '&:hover': { 
+                  backgroundColor: title === 'Pending Rent' ? '#2563eb' : '#059669' 
+                },
+                textTransform: 'none',
+                fontWeight: 500
               }}
-              onClick={() => setOpenModal(true)} // Open the modal
+              onClick={() => setOpenModal(true)}
             >
               Pay Now
             </Button>
@@ -50,22 +89,21 @@ const PendingAmountCard = ({ title, value, shopNo }) => {
         </CardContent>
       </Card>
 
-      {/* Conditionally Render Payment Form Modal */}
       {openModal && (
         <>
           {title === 'Pending Utility Bills' ? (
             <BillPaymentForm
               open={openModal}
-              onClose={() => setOpenModal(false)} // Close the modal
+              onClose={() => setOpenModal(false)}
               title={title}
-              shopNo={shopNo} // Pass shop number if needed
+              shopNo={shopNo}
             />
           ) : (
             <RentPaymentForm
               open={openModal}
-              onClose={() => setOpenModal(false)} // Close the modal
+              onClose={() => setOpenModal(false)}
               title={title}
-              shopNo={shopNo} // Pass shop number if needed
+              shopNo={shopNo}
             />
           )}
         </>

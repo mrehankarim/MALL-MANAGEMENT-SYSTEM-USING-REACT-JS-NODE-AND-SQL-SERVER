@@ -174,15 +174,16 @@ const insertBill = asyncHandler(async (req, res) => {
     if (!await Shop.MatchShopAndSubadmin(shop_no, req.user?.username)) {
       throw new apiError(400, "Invalid shop Number")
     }
-    console.log("atleast here")
+    
     if (!await Bill.InsertBill(shop_no, type, amount, month_year)) {
       throw new apiError(500, "Something went wrong while inserting bill")
     }
-  res.status(200).json(
-    new apiResponse(200, {}, "Bill inserted successfully")
-  )
 
+    res.status(200).json(
+      new apiResponse(200, {}, "Bill inserted successfully")
+    )
 })
+
 const getBillsofShop = asyncHandler(async (req, res) => {
   //send shop_no of store from front end
 

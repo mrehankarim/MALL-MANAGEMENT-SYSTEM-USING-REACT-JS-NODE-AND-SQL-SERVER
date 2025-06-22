@@ -4,80 +4,89 @@ import { Container, Box, Typography, TextField, Button } from '@mui/material';
 const Contact = () => {
     return (
         <Container
-        id="contact"
-            style={{
-                height: "100vh",
+            id="contact"
+            sx={{
+                py: 8,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                border:"2px solid #192230",
-                borderRadius:"10px",
-                marginTop:"30px"
+                border: "1px solid",
+                borderColor: 'divider',
+                borderRadius: "12px",
+                my: 4,
+                backgroundColor: 'background.paper'
             }}
-        >
+            >
             <Box
-                style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    width: "100%",
-                    maxWidth: "1100px",
-                    gap: "40px",
-                    padding: "20px",
+                sx={{
+                display: "flex",
+                flexDirection: { xs: 'column', md: 'row' },
+                justifyContent: "space-between",
+                alignItems: "center",
+                width: "100%",
+                maxWidth: "1100px",
+                gap: 6,
+                p: 4,
                 }}
             >
-                {/* Left Column - Copywriting */}
-                <Box style={{ flex: 1 }}>
-                    <Typography variant="h3" sx={{ fontWeight: "bold", mb: 2 }}>
-                        Let’s Connect
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: "#afaaaa", mb: 2 }}>
-                        Have questions about MallMatrix or want to learn more about how we can support your mall’s operations? Reach out to us—we’re here to help.
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: "#afaaaa" }}>
-                        Whether you're ready to get started or just exploring, our team is happy to chat.
-                    </Typography>
+                <Box sx={{ flex: 1 }}>
+                <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>
+                    Let's Connect
+                </Typography>
+                <Typography variant="body1" sx={{ color: "text.secondary", mb: 2 }}>
+                    Have questions about MallMatrix? Reach out—we're here to help.
+                </Typography>
+                <Typography variant="body1" sx={{ color: "text.secondary" }}>
+                    Our team is happy to chat about your needs.
+                </Typography>
                 </Box>
 
-                {/* Right Column - Contact Form */}
                 <Box
-                    style={{
-                        flex: 1,
-                        maxWidth: "500px",
-                        minHeight: "500px",
-                        border: "2px solid #192230",
-                        borderRadius: "12px",
-                        padding: "40px 30px",
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: "25px",
-                        justifyContent: "center",
+                sx={{
+                    flex: 1,
+                    maxWidth: "500px",
+                    width: '100%',
+                    border: "1px solid",
+                    borderColor: 'divider',
+                    borderRadius: "12px",
+                    p: 4,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 3,
+                }}
+                >
+                <TextField
+                    fullWidth
+                    label="Your Name"
+                    variant="outlined"
+                    size="medium"
+                />
+                <TextField
+                    fullWidth
+                    label="Email Address"
+                    variant="outlined"
+                    size="medium"
+                />
+                <TextField
+                    fullWidth
+                    label="Message"
+                    multiline
+                    rows={4}
+                    variant="outlined"
+                />
+                <Button 
+                    variant="contained" 
+                    sx={{ 
+                    alignSelf: 'flex-end',
+                    borderRadius: '8px',
+                    px: 4
                     }}
                 >
-                    <TextField
-                        fullWidth
-                        label="Your Name"
-                        variant="outlined"
-                        size="medium"
-                    />
-                    <TextField
-                        fullWidth
-                        label="Email Address"
-                        variant="outlined"
-                        size="medium"
-                    />
-                    <TextField
-                        fullWidth
-                        label="Message"
-                        multiline
-                        rows={6}
-                        variant="outlined"
-                    />
-                    <Button variant="outlined">Send Message</Button>
+                    Send
+                </Button>
                 </Box>
             </Box>
-        </Container>
+            </Container>
     );
 };
 
