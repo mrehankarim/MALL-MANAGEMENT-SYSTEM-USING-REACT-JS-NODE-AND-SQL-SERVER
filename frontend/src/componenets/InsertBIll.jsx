@@ -30,33 +30,47 @@ const InsertBill = ({ setRevenue }) => {
     fetchShops();
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // ...existing code...
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // Validate form inputs
-    if ([shopNo, type, amount, monthYear].some(field => String(field).trim() === "")) {
-  setError("All fields are required");
-  return;
-}
+  // Validate and convert types
+  const shopNoInt = parseInt(shopNo, 10);
+  const amountDecimal = parseFloat(amount);
+  // monthYear is from <input type="date" />, so it's already in YYYY-MM-DD format (DATE type)
+  // type is already a string
 
+  if (
+    isNaN(shopNoInt) ||
+    !type ||
+    isNaN(amountDecimal) ||
+    !monthYear
+  ) {
+    setError("All fields are required and must be valid.");
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        'http://localhost:3000/api/v1/subscriber/add/bill',
-        { shop_no: shopNo, type, amount, month_year: monthYear },
-        { withCredentials: true }
-      );
-      setRevenue(false);
-      alert('Revenue added successfully!');
-    } catch (error) {
-      console.error('Failed to add revenue:', error);
-      setError('Failed to add revenue. Please try again.');
-    }
-  };
+  try {
+    await axios.post(
+      'http://localhost:3000/api/v1/subscriber/add/bill',
+      {
+        shop_no: shopNoInt,        // int
+        type: type,                // string
+        amount: amountDecimal,     // decimal
+        month_year: monthYear      // DATE (YYYY-MM-DD)
+      },
+      { withCredentials: true }
+    );
+    setRevenue(false);
+    alert('Bill added successfully!');
+  } catch (error) {
+    setError('Failed to add bill. Please try again.');
+  }
+};
 
   return (
     <Box sx={{ maxWidth: 400, mx: 'auto', mt: 3, padding: 3, backgroundColor: "#020317", borderRadius: 2, color: '#f1f5f9' }}>
-      <Typography variant="h6" sx={{ mb: 2, color: '#3B82F6' }}>Add Revenue</Typography>
+      <Typography variant="h6" sx={{ mb: 2, color: '#3B82F6' }}>Add Bill</Typography>
 
       {error && <Typography color="error" sx={{ mb: 2 }}>{error}</Typography>}
 
@@ -107,10 +121,12 @@ const InsertBill = ({ setRevenue }) => {
           />
 
           <TextField
-            label="Month/Year"
+            label="Date"
+            type="date"
             value={monthYear}
             onChange={(e) => setMonthYear(e.target.value)}
             fullWidth
+            InputLabelProps={{ shrink: true }}
             sx={{ mb: 2, input: { color: '#f1f5f9' }, label: { color: '#f1f5f9' } }}
           />
 
@@ -121,7 +137,7 @@ const InsertBill = ({ setRevenue }) => {
             fullWidth 
             sx={{ backgroundColor: '#3B82F6', color: '#f1f5f9', '&:hover': { backgroundColor: '#2563EB' } }}
           >
-            Add Revenue
+            Add Bill
           </Button>
           <Button 
             variant="outlined" 

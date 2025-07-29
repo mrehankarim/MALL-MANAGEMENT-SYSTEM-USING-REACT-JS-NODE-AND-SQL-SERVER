@@ -39,7 +39,7 @@ const Signup = ({ setSignUp }) => {
                 firstName: '',
                 lastName: '',
                 password: '',
-                role:'admin'
+                role:'subscriber'
             });
             alert("Registration Successful");
             setSignUp(prev => !prev);

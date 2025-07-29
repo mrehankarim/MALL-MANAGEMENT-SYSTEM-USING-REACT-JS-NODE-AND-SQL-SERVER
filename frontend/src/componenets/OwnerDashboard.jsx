@@ -1,6 +1,23 @@
-
 import React, { useState } from 'react';
-import { Button, Box } from '@mui/material';
+import { 
+  Button, 
+  Box, 
+  Grid, 
+  Typography, 
+  Paper,
+  IconButton,
+  Tooltip
+} from '@mui/material';
+import {
+  PersonAdd as PersonAddIcon,
+  Receipt as ReceiptIcon,
+  AttachMoney as AttachMoneyIcon,
+  Feedback as FeedbackIcon,
+  Store as StoreIcon,
+  Groups as GroupsIcon,
+  Paid as PaidIcon,
+  Dashboard as DashboardIcon
+} from '@mui/icons-material';
 import AddCustomer from './AddCustomer';
 import InsertBill from './InsertBIll';
 import OwnerRevenueCard from './OwnerRevenueCard';
@@ -8,7 +25,6 @@ import OwnerExpenseCard from './OwnerExpenseCard';
 import OwnerAddFeedbackForm from './OwnerAddFeedbackForm';
 import AddShops from "../componenets/AddShops"
 import axios from 'axios';
-
 import AddEmployee from './AddEmployee'
 import GeneratePayroll from './GeneratePayroll'
 
@@ -16,9 +32,9 @@ const OwnerDashboard = () => {
   const [signup, setSignup] = useState(false);
   const [revenue, setRevenue] = useState(false);
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
-  const [showAddShops, setShowAddShops] = useState(false)
-  const [showAddEmployee, setShowAddEmployee] = useState(false)
-  const [showPayroll, setShowPayroll] = useState(false)
+  const [showAddShops, setShowAddShops] = useState(false);
+  const [showAddEmployee, setShowAddEmployee] = useState(false);
+  const [showPayroll, setShowPayroll] = useState(false);
 
   const generateMonthlyRent = async () => {
     try {
@@ -33,30 +49,96 @@ const OwnerDashboard = () => {
       alert("Rent generation failed");
     }
   };
-  
+
+  const actionButtons = [
+    {
+      label: "Add Customer",
+      icon: <PersonAddIcon />,
+      action: () => setSignup(prev => !prev)
+    },
+    {
+      label: "Insert Bill",
+      icon: <ReceiptIcon />,
+      action: () => setRevenue(prev => !prev)
+    },
+    {
+      label: "Generate Rent",
+      icon: <AttachMoneyIcon />,
+      action: generateMonthlyRent
+    },
+    {
+      label: "Add Feedback",
+      icon: <FeedbackIcon />,
+      action: () => setShowFeedbackForm(true)
+    },
+    {
+      label: "Add Shops in Bulk",
+      icon: <StoreIcon />,
+      action: () => setShowAddShops(true)
+    },
+    {
+      label: "Add Employee",
+      icon: <GroupsIcon />,
+      action: () => setShowAddEmployee(true)
+    },
+    {
+      label: "Generate Payroll",
+      icon: <PaidIcon />,
+      action: () => setShowPayroll(true)
+    }
+  ];
 
   return (
-    <>
-      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
-        <Button variant="outlined" onClick={() => setSignup(prev => !prev)}>
-          Add Customer
-        </Button>
-        <Button variant="outlined" onClick={() => setRevenue(prev => !prev)}>
-          Insert Bill
-        </Button>
-        <Button variant="outlined" onClick={generateMonthlyRent}>
-          Generate Rent
-        </Button>
-        <Button variant="outlined" onClick={() => setShowFeedbackForm(true)}>
-          Add Feedback
-        </Button>
-      </Box>
+    <Box sx={{ p: 3 }}>
+      
+      {/* Action Buttons Section */}
+      <Paper elevation={3} sx={{ p: 2, mb: 3, borderRadius: 2, backgroundColor: '#050505' }}>
+        <Typography variant="h6" gutterBottom sx={{ mb: 2 }}>
+          Quick Actions
+        </Typography>
+        <Grid container spacing={2}>
+          {actionButtons.map((button, index) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+              <Tooltip title={button.label}>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  startIcon={button.icon}
+                  onClick={button.action}
+                  sx={{
+                    py: 1.5,
+                    justifyContent: 'flex-start',
+                    textTransform: 'none',
+                    '&:hover': {
+                      backgroundColor: 'primary.light',
+                      color: 'primary.contrastText'
+                    }
+                  }}
+                >
+                  {button.label}
+                </Button>
+              </Tooltip>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
 
+      <Grid container sx={{ mb: 3 }}>
+        <Grid item xs={12} md={6}>
+          <Box sx={{ pr: 8.5, pl: 30.5 }}> {/* 12px right padding */}
+            <OwnerRevenueCard />
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Box sx={{ pl: 1.5 }}> {/* 12px left padding */}
+            <OwnerExpenseCard />
+          </Box>
+        </Grid>
+      </Grid>
+
+      {/* Modals */}
       {signup && <AddCustomer setSignUp={setSignup} />}
       {revenue && <InsertBill setRevenue={setRevenue} />}
-
-      <OwnerRevenueCard />
-      <OwnerExpenseCard />
 
       {/* Feedback Modal */}
       {showFeedbackForm && (
@@ -91,18 +173,12 @@ const OwnerDashboard = () => {
           </Box>
         </Box>
       )}
-      <br />
-      <Box sx={{display:"flex",gap:"10px"}}>
 
-      <Button variant='outlined' onClick={() => setShowAddShops(true)}>Add Shops in Bulk</Button>
+      {/* Other Modals */}
       {showAddShops && <AddShops open={showAddShops} onClose={() => setShowAddShops(false)} />}
-      <Button variant='outlined' onClick={() => setShowAddEmployee(true)}>Add Employee</Button>
       {showAddEmployee && <AddEmployee setAddEmployee={setShowAddEmployee} />}
-
-      <Button variant='outlined' onClick={() => setShowPayroll(true)}>Generate Employees Payroll</Button>
       {showPayroll && <GeneratePayroll open={showPayroll} onClose={() => setShowPayroll(false)} />}
-        </Box>
-    </>
+    </Box>
   );
 };
 

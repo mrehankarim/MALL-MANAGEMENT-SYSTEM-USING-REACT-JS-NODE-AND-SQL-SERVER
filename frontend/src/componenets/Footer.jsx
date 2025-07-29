@@ -7,52 +7,59 @@ const Footer = () => {
         <Box
             component="footer"
             sx={{
-                backgroundColor:theme.palette.background.default,
-                color: '#ffffff',
-                py: 4,
-                borderTop: '2px solid #192230',
+                backgroundColor: theme.palette.background.default,
+                color: theme.palette.text.primary,
+                py: 6,
+                borderTop: '1px solid',
+                borderColor: theme.palette.divider,
                 mt: 8,
             }}
-        >
+            >
             <Container maxWidth="lg">
                 <Stack
-                    direction={{ xs: 'column', sm: 'row' }}
-                    justifyContent="space-between"
-                    alignItems={{ xs: 'center', sm: 'flex-start' }}
-                    spacing={3}
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                alignItems={{ xs: 'center', sm: 'flex-start' }}
+                spacing={4}
+                sx={{ mb: 4 }}
                 >
-                    <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                            Mall Matrix
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#bbbbbb', mt: 1 }}>
-                            Built for the future of mall management.
-                        </Typography>
-                    </Box>
+                <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>
+                    MallMatrix
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    Built for the future of mall management.
+                    </Typography>
+                </Box>
 
-                    <Stack spacing={1}>
-                        <Link href="/" underline="none" color="#bbbbbb" sx={{ '&:hover': { color: '#ffffff' } }}>
-                            Home
-                        </Link>
-                        <Link href="/about" underline="none" color="#bbbbbb" sx={{ '&:hover': { color: '#ffffff' } }}>
-                            About
-                        </Link>
-                        <Link href="/pricing" underline="none" color="#bbbbbb" sx={{ '&:hover': { color: '#ffffff' } }}>
-                            Pricing
-                        </Link>
-                        <Link href="/contact" underline="none" color="#bbbbbb" sx={{ '&:hover': { color: '#ffffff' } }}>
-                            Contact
-                        </Link>
-                    </Stack>
+                <Stack spacing={1}>
+                    {['Home', 'About', 'Pricing', 'Contact'].map((item) => (
+                    <Link 
+                        href={`#${item.toLowerCase()}`} 
+                        key={item}
+                        underline="none" 
+                        color="text.secondary"
+                        sx={{ 
+                        '&:hover': { 
+                            color: 'primary.main',
+                            textDecoration: 'underline'
+                        },
+                        transition: 'color 0.2s'
+                        }}
+                    >
+                        {item}
+                    </Link>
+                    ))}
+                </Stack>
                 </Stack>
 
-                <Divider sx={{ my: 3, borderColor: '#333' }} />
+                <Divider sx={{ my: 3, borderColor: 'divider' }} />
 
-                <Typography variant="body2" align="center" color="#777">
-                    &copy; {new Date().getFullYear()} Mall Matrix. All rights reserved.
+                <Typography variant="body2" align="center" color="text.secondary">
+                &copy; {new Date().getFullYear()} Mall Matrix. All rights reserved.
                 </Typography>
             </Container>
-        </Box>
+            </Box>
     );
 };
 

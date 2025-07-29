@@ -1,6 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Modal, Typography, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { 
+  Box, 
+  Button, 
+  Modal, 
+  Typography, 
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Chip,
+  CircularProgress
+} from '@mui/material';
+import {
+  Close as CloseIcon,
+  Upload as UploadIcon,
+  CheckCircle as SuccessIcon,
+  Error as ErrorIcon
+} from '@mui/icons-material';
 import axios from 'axios';
 
 const AddShops = ({ open, onClose }) => {
@@ -9,7 +29,6 @@ const AddShops = ({ open, onClose }) => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    // Reset form when modal is closed
     if (!open) {
       setSelectedFile(null);
       setMessage('');
@@ -40,9 +59,9 @@ const AddShops = ({ open, onClose }) => {
       });
 
       setMessage('Shops uploaded successfully!');
-      setSelectedFile(null); // Clear file input after success
+      setSelectedFile(null);
     } catch (err) {
-      setMessage('Failed to upload shops.');
+      setMessage(err.response?.data?.message || 'Failed to upload shops.');
     } finally {
       setUploading(false);
     }
@@ -58,37 +77,55 @@ const AddShops = ({ open, onClose }) => {
           transform: 'translate(-50%, -50%)',
           bgcolor: 'background.paper',
           boxShadow: 24,
-          p: 4,
+          p: 3,
           borderRadius: 2,
-          minWidth: 350,
-          maxWidth: 400,
+          width: { xs: '90%', sm: '500px' },
+          maxHeight: '90vh',
+          overflowY: 'auto'
         }}
       >
-        <IconButton onClick={onClose} sx={{ position: 'absolute', top: 8, right: 8 }}>
-          <CloseIcon />
-        </IconButton>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" component="h2">
+            Upload Shops Data
+          </Typography>
+          <IconButton onClick={onClose} size="small">
+            <CloseIcon />
+          </IconButton>
+        </Box>
 
-        <Typography variant="h6" mb={2}>
-          Upload CSV File
+        <Typography variant="subtitle2" gutterBottom>
+          Required CSV format (with headers):
         </Typography>
 
-        <Typography variant="body2" mb={2}>
-          <b>Required CSV format (with headers):</b>
-          <br />
-          shopNo,location,status,rent
-          <br />
-          <span style={{ color: '#888' }}>
-            Example: <br />
-            101,First Floor,pending,50000
-          </span>
-        </Typography>
+        <TableContainer component={Paper} sx={{ mb: 2, border: '1px solid #e0e0e0' }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
+                <TableCell sx={{ fontWeight: 600, color: 'black' }}>shopNo</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: 'black' }}>location</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: 'black' }}>status</TableCell>
+                <TableCell sx={{ fontWeight: 600, color: 'black' }}>rent</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>101</TableCell>
+                <TableCell>First Floor</TableCell>
+                <TableCell>
+                  <Chip label="vacant" size="small" color="warning" />
+                </TableCell>
+                <TableCell>50000</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-        {/* Styled upload button */}
         <Button
           component="label"
           variant="outlined"
           fullWidth
-          sx={{ mb: 2 }}
+          startIcon={<UploadIcon />}
+          sx={{ mb: 2, py: 1 }}
         >
           {selectedFile ? selectedFile.name : 'Choose CSV File'}
           <input
@@ -102,19 +139,35 @@ const AddShops = ({ open, onClose }) => {
         <Button
           variant="contained"
           onClick={handleUpload}
-          disabled={uploading}
+          disabled={uploading || !selectedFile}
           fullWidth
+          startIcon={uploading ? <CircularProgress size={20} color="inherit" /> : null}
+          sx={{ py: 1 }}
         >
-          {uploading ? 'Uploading...' : 'Upload'}
+          {uploading ? 'Uploading...' : 'Upload Shops'}
         </Button>
 
         {message && (
-          <Typography
-            mt={2}
-            sx={{ color: message.includes('success') ? 'green' : 'red' }}
+          <Box
+            sx={{
+              mt: 2,
+              p: 1.5,
+              borderRadius: 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              backgroundColor: message.includes('success') ? 'rgba(46, 125, 50, 0.1)' : 'rgba(211, 47, 47, 0.1)'
+            }}
           >
-            {message}
-          </Typography>
+            {message.includes('success') ? (
+              <SuccessIcon color="success" fontSize="small" />
+            ) : (
+              <ErrorIcon color="error" fontSize="small" />
+            )}
+            <Typography variant="body2" color={message.includes('success') ? 'success.main' : 'error.main'}>
+              {message}
+            </Typography>
+          </Box>
         )}
       </Box>
     </Modal>
