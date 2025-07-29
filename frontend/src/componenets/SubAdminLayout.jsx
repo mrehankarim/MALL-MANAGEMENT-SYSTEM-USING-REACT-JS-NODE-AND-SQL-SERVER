@@ -151,7 +151,7 @@ export default function SubAdminLayout({ username, children }) {
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', gap: '14px' }}>
-            <Box sx={{ border: '1px solid #3B82F6', borderRadius: '4px' }}>
+            <Box sx={{ borderRadius: '4px' }}>
               <Button 
                 onClick={logOut}
                 variant="outlined"
